@@ -1419,6 +1419,4072 @@
       "contracts/core/CarbonCreditNFT.sol:CarbonCreditNFT": {
         "src": "contracts\\core\\CarbonCreditNFT.sol:23",
         "version": {
+          "withMetadata": "96ac00d8b8af7c8370ccbbb9dec2b60fbdead7e691014e59b0addf436642fa68",
+          "withoutMetadata": "96ac00d8b8af7c8370ccbbb9dec2b60fbdead7e691014e59b0addf436642fa68",
+          "linkedWithoutMetadata": "96ac00d8b8af7c8370ccbbb9dec2b60fbdead7e691014e59b0addf436642fa68"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/security/Pausable.sol:Pausable",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol:ERC721Enumerable",
+          "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol:IERC721Enumerable",
+          "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol:ERC721URIStorage",
+          "@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721",
+          "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol:IERC721Metadata",
+          "@openzeppelin/contracts/interfaces/IERC4906.sol:IERC4906",
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Counters.sol:Counters"
+        ],
+        "methods": [
+          "()",
+          "mintCredit(address,string,string,string,string,uint256,uint256,string,bytes32,string,string)",
+          "batchMint(address,string,struct CreditData[])",
+          "mintSimpleCredits(address,uint256)",
+          "registerAndClaimCredits()",
+          "retireCredit(uint256,string)",
+          "batchRetire(uint256[],string)",
+          "getCreditDetails(uint256)",
+          "getProjectCredits(string)",
+          "getRetirementCertificate(uint256)",
+          "getGlobalStats()",
+          "getMethodologyStats(string)",
+          "isSerialTokenized(string,string)",
+          "pause()",
+          "unpause()",
+          "updateVerification(uint256,bytes32,string)",
+          "tokenURI(uint256)",
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "CarbonCreditNFT",
+            "src": "contracts\\core\\CarbonCreditNFT.sol:121"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:24"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:27"
+            },
+            {
+              "label": "_owners",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:30"
+            },
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:33"
+            },
+            {
+              "label": "_tokenApprovals",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:36"
+            },
+            {
+              "label": "_operatorApprovals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:39"
+            },
+            {
+              "label": "_tokenURIs",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_string_storage)",
+              "contract": "ERC721URIStorage",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721URIStorage.sol:16"
+            },
+            {
+              "label": "_ownedTokens",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:16"
+            },
+            {
+              "label": "_ownedTokensIndex",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:19"
+            },
+            {
+              "label": "_allTokens",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_array(t_uint256)dyn_storage",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:22"
+            },
+            {
+              "label": "_allTokensIndex",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:25"
+            },
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\security\\Pausable.sol:28"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "13",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:37"
+            },
+            {
+              "label": "_tokenIds",
+              "offset": 0,
+              "slot": "14",
+              "type": "t_struct(Counter)6025_storage",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:39"
+            },
+            {
+              "label": "credits",
+              "offset": 0,
+              "slot": "15",
+              "type": "t_mapping(t_uint256,t_struct(CarbonCredit)7403_storage)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:68"
+            },
+            {
+              "label": "issuedSerials",
+              "offset": 0,
+              "slot": "16",
+              "type": "t_mapping(t_bytes32,t_bool)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:69"
+            },
+            {
+              "label": "retirementCertificates",
+              "offset": 0,
+              "slot": "17",
+              "type": "t_mapping(t_uint256,t_struct(RetirementCertificate)7415_storage)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:70"
+            },
+            {
+              "label": "projectCredits",
+              "offset": 0,
+              "slot": "18",
+              "type": "t_mapping(t_string_memory_ptr,t_array(t_uint256)dyn_storage)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:71"
+            },
+            {
+              "label": "userRetiredTonnes",
+              "offset": 0,
+              "slot": "19",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:72"
+            },
+            {
+              "label": "totalMintedTonnes",
+              "offset": 0,
+              "slot": "20",
+              "type": "t_uint256",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:75"
+            },
+            {
+              "label": "totalRetiredTonnes",
+              "offset": 0,
+              "slot": "21",
+              "type": "t_uint256",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:76"
+            },
+            {
+              "label": "totalActiveCredits",
+              "offset": 0,
+              "slot": "22",
+              "type": "t_uint256",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:77"
+            },
+            {
+              "label": "methodologyTonnes",
+              "offset": 0,
+              "slot": "23",
+              "type": "t_mapping(t_string_memory_ptr,t_uint256)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:80"
+            },
+            {
+              "label": "hasRegistered",
+              "offset": 0,
+              "slot": "24",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "CarbonCreditNFT",
+              "src": "contracts\\core\\CarbonCreditNFT.sol:83"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+              "label": "mapping(address => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+              "label": "mapping(address => mapping(uint256 => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_bool)": {
+              "label": "mapping(bytes32 => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(string => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_uint256)": {
+              "label": "mapping(string => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_string_storage)": {
+              "label": "mapping(uint256 => string)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(CarbonCredit)7403_storage)": {
+              "label": "mapping(uint256 => struct CarbonCreditNFT.CarbonCredit)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(RetirementCertificate)7415_storage)": {
+              "label": "mapping(uint256 => struct CarbonCreditNFT.RetirementCertificate)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_memory_ptr": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(CarbonCredit)7403_storage": {
+              "label": "struct CarbonCreditNFT.CarbonCredit",
+              "members": [
+                {
+                  "label": "projectId",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "projectName",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "methodology",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "co2Tonnes",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "vintageYear",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "geography",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "oracleProofHash",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "satelliteDataCID",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "verificationSource",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "verificationDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "isRetired",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "issuanceDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "11"
+                },
+                {
+                  "label": "serialNumber",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "12"
+                }
+              ],
+              "numberOfBytes": "416"
+            },
+            "t_struct(Counter)6025_storage": {
+              "label": "struct Counters.Counter",
+              "members": [
+                {
+                  "label": "_value",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                }
+              ],
+              "numberOfBytes": "32"
+            },
+            "t_struct(RetirementCertificate)7415_storage": {
+              "label": "struct CarbonCreditNFT.RetirementCertificate",
+              "members": [
+                {
+                  "label": "originalTokenId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "retiredBy",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "retirementDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "retirementReason",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "co2Tonnes",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/core/CarbonCreditToken.sol:CarbonCreditToken": {
+        "src": "contracts\\core\\CarbonCreditToken.sol:22",
+        "version": {
+          "withMetadata": "5fa435fcf7d2ced66abab872325ae0f9ec46068743ae995b8ad9002ae6f46631",
+          "withoutMetadata": "5fa435fcf7d2ced66abab872325ae0f9ec46068743ae995b8ad9002ae6f46631",
+          "linkedWithoutMetadata": "5fa435fcf7d2ced66abab872325ae0f9ec46068743ae995b8ad9002ae6f46631"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/security/Pausable.sol:Pausable",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol:ERC20Burnable",
+          "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(string,string,address,string)",
+          "wrapCredit(uint256)",
+          "batchWrap(uint256[])",
+          "unwrapCredit(uint256)",
+          "unwrapAny(uint256)",
+          "getUserWrappedNFTs(address)",
+          "getBackingInfo()",
+          "isFullyBacked()",
+          "pause()",
+          "unpause()",
+          "decimals()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "CarbonCreditToken",
+            "src": "contracts\\core\\CarbonCreditToken.sol:83"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "nftContract",
+            "src": "contracts\\core\\CarbonCreditToken.sol:35"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:39"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:41"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:43"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:45"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:46"
+            },
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\security\\Pausable.sol:28"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:37"
+            },
+            {
+              "label": "methodology",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_string_storage",
+              "contract": "CarbonCreditToken",
+              "src": "contracts\\core\\CarbonCreditToken.sol:38"
+            },
+            {
+              "label": "wrappedNFTs",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_mapping(t_uint256,t_bool)",
+              "contract": "CarbonCreditToken",
+              "src": "contracts\\core\\CarbonCreditToken.sol:41"
+            },
+            {
+              "label": "userWrappedNFTs",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "CarbonCreditToken",
+              "src": "contracts\\core\\CarbonCreditToken.sol:44"
+            },
+            {
+              "label": "nftIndexInUserArray",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "CarbonCreditToken",
+              "src": "contracts\\core\\CarbonCreditToken.sol:47"
+            },
+            {
+              "label": "totalNFTsWrapped",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_uint256",
+              "contract": "CarbonCreditToken",
+              "src": "contracts\\core\\CarbonCreditToken.sol:50"
+            },
+            {
+              "label": "totalTonnesWrapped",
+              "offset": 0,
+              "slot": "13",
+              "type": "t_uint256",
+              "contract": "CarbonCreditToken",
+              "src": "contracts\\core\\CarbonCreditToken.sol:53"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_bool)": {
+              "label": "mapping(uint256 => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/core/CarbonMarketplace.sol:CarbonMarketplace": {
+        "src": "contracts\\core\\CarbonMarketplace.sol:24",
+        "version": {
+          "withMetadata": "12efb644c673c14ebf05a10b7a109c10e456eb8096807abdffb231c8868fd4f5",
+          "withoutMetadata": "12efb644c673c14ebf05a10b7a109c10e456eb8096807abdffb231c8868fd4f5",
+          "linkedWithoutMetadata": "12efb644c673c14ebf05a10b7a109c10e456eb8096807abdffb231c8868fd4f5"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/security/Pausable.sol:Pausable",
+          "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20"
+        ],
+        "methods": [
+          "(address,address,address)",
+          "createBuyOrder(uint256,uint256,uint256,bool)",
+          "createSellOrder(uint256,uint256,uint256,bool)",
+          "fillOrder(uint256,uint256)",
+          "cancelOrder(uint256)",
+          "createAuction(uint256,uint256,uint256)",
+          "placeBid(uint256,uint256)",
+          "finalizeAuction(uint256)",
+          "cancelAuction(uint256)",
+          "addLiquidity(uint256,uint256)",
+          "removeLiquidity(uint256)",
+          "swap(bool,uint256,uint256)",
+          "getPrice()",
+          "getOrder(uint256)",
+          "getAuction(uint256)",
+          "getUserOrders(address)",
+          "getUserAuctions(address)",
+          "setKYCStatus(address,bool)",
+          "setTradingFee(uint256)",
+          "pause()",
+          "unpause()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "CarbonMarketplace",
+            "src": "contracts\\core\\CarbonMarketplace.sol:158"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "paymentToken",
+            "src": "contracts\\core\\CarbonMarketplace.sol:35"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "carbonToken",
+            "src": "contracts\\core\\CarbonMarketplace.sol:38"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "nftContract",
+            "src": "contracts\\core\\CarbonMarketplace.sol:41"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "nextOrderId",
+            "src": "contracts\\core\\CarbonMarketplace.sol:88"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "nextAuctionId",
+            "src": "contracts\\core\\CarbonMarketplace.sol:89"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "tradingFeePercent",
+            "src": "contracts\\core\\CarbonMarketplace.sol:90"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:37"
+            },
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\security\\Pausable.sol:28"
+            },
+            {
+              "label": "orders",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_struct(Order)9600_storage)",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:80"
+            },
+            {
+              "label": "auctions",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_struct(Auction)9620_storage)",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:81"
+            },
+            {
+              "label": "kycVerified",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:82"
+            },
+            {
+              "label": "lpTokens",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:83"
+            },
+            {
+              "label": "userOrders",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:84"
+            },
+            {
+              "label": "userAuctions",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:85"
+            },
+            {
+              "label": "ammPool",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_struct(Pool)9632_storage",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:87"
+            },
+            {
+              "label": "nextOrderId",
+              "offset": 0,
+              "slot": "14",
+              "type": "t_uint256",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:88"
+            },
+            {
+              "label": "nextAuctionId",
+              "offset": 0,
+              "slot": "15",
+              "type": "t_uint256",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:89"
+            },
+            {
+              "label": "tradingFeePercent",
+              "offset": 0,
+              "slot": "16",
+              "type": "t_uint256",
+              "contract": "CarbonMarketplace",
+              "src": "contracts\\core\\CarbonMarketplace.sol:90"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(Auction)9620_storage)": {
+              "label": "mapping(uint256 => struct CarbonMarketplace.Auction)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(Order)9600_storage)": {
+              "label": "mapping(uint256 => struct CarbonMarketplace.Order)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(Auction)9620_storage": {
+              "label": "struct CarbonMarketplace.Auction",
+              "members": [
+                {
+                  "label": "auctionId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "seller",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "startPrice",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "highestBid",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "highestBidder",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "startTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "endTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "8"
+                }
+              ],
+              "numberOfBytes": "288"
+            },
+            "t_struct(Order)9600_storage": {
+              "label": "struct CarbonMarketplace.Order",
+              "members": [
+                {
+                  "label": "orderId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "trader",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "isBuyOrder",
+                  "type": "t_bool",
+                  "offset": 20,
+                  "slot": "1"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "pricePerTonne",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "filled",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "createdAt",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "expiresAt",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "requiresKYC",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "8"
+                }
+              ],
+              "numberOfBytes": "288"
+            },
+            "t_struct(Pool)9632_storage": {
+              "label": "struct CarbonMarketplace.Pool",
+              "members": [
+                {
+                  "label": "carbonReserve",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "stableReserve",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalLPTokens",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "lastPrice",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "lastUpdate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/ICarbonCreditNFT.sol:ICarbonCreditNFT": {
+        "src": "contracts\\interfaces\\ICarbonCreditNFT.sol:8",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "mintCredit(address,string,string,string,string,uint256,uint256,string,bytes32,string,string)",
+          "retireCredit(uint256,string)",
+          "batchRetire(uint256[],string)",
+          "getCreditDetails(uint256)",
+          "getRetirementCertificate(uint256)",
+          "getGlobalStats()",
+          "isSerialTokenized(string,string)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/ICarbonCreditToken.sol:ICarbonCreditToken": {
+        "src": "contracts\\interfaces\\ICarbonCreditToken.sol:10",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20"
+        ],
+        "libraries": [],
+        "methods": [
+          "wrapCredit(uint256)",
+          "batchWrap(uint256[])",
+          "unwrapCredit(uint256)",
+          "unwrapAny(uint256)",
+          "getUserWrappedNFTs(address)",
+          "getBackingInfo()",
+          "isFullyBacked()",
+          "nftContract()",
+          "methodology()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/ICarbonMarketplace.sol:ICarbonMarketplace": {
+        "src": "contracts\\interfaces\\ICarbonMarketplace.sol:8",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "createBuyOrder(uint256,uint256,uint256,bool)",
+          "createSellOrder(uint256,uint256,uint256,bool)",
+          "fillOrder(uint256,uint256)",
+          "cancelOrder(uint256)",
+          "addLiquidity(uint256,uint256)",
+          "removeLiquidity(uint256)",
+          "swap(bool,uint256,uint256)",
+          "getPrice()",
+          "getOrder(uint256)",
+          "getUserOrders(address)",
+          "ammPool()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/IEmissionVerifier.sol:IEmissionVerifier": {
+        "src": "contracts\\interfaces\\IEmissionVerifier.sol:8",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "registerProject(string,address,string,uint256,uint256,uint256,string,string,bytes32)",
+          "requestVerification(string)",
+          "getProject(string)",
+          "getVerificationRequest(bytes32)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/oracle/CarbonPriceOracle.sol:CarbonPriceOracle": {
+        "src": "contracts\\oracle\\CarbonPriceOracle.sol:23",
+        "version": {
+          "withMetadata": "9bb648a702714e058bc73b12a9bb59e97fb452482455ae64332f2113aefcd3be",
+          "withoutMetadata": "9bb648a702714e058bc73b12a9bb59e97fb452482455ae64332f2113aefcd3be",
+          "linkedWithoutMetadata": "9bb648a702714e058bc73b12a9bb59e97fb452482455ae64332f2113aefcd3be"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context",
+          "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatibleInterface.sol:AutomationCompatibleInterface",
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol:FunctionsClient",
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsClient.sol:IFunctionsClient"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol:FunctionsRequest"
+        ],
+        "methods": [
+          "(address)",
+          "checkUpkeep(bytes)",
+          "performUpkeep(bytes)",
+          "updatePrice(string)",
+          "updateAllPrices()",
+          "getPrice(string)",
+          "getPriceData(string)",
+          "getPriceHistory(string,uint256)",
+          "getLatestPrice(string)",
+          "setFunctionsConfig(bytes32,uint64,uint32)",
+          "setUpdateInterval(uint256)",
+          "setVolatilityThreshold(uint256)",
+          "grantAutomationRole(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "CarbonPriceOracle",
+            "src": "contracts\\oracle\\CarbonPriceOracle.sol:135"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "gasLimit",
+            "src": "contracts\\oracle\\CarbonPriceOracle.sol:39"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "methodologies",
+            "src": "contracts\\oracle\\CarbonPriceOracle.sol:54"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "updateInterval",
+            "src": "contracts\\oracle\\CarbonPriceOracle.sol:56"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "highVolatilityThreshold",
+            "src": "contracts\\oracle\\CarbonPriceOracle.sol:58"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "priceFetcherSource",
+            "src": "contracts\\oracle\\CarbonPriceOracle.sol:62"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "functionsRouter",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:36"
+            },
+            {
+              "label": "donId",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_bytes32",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:37"
+            },
+            {
+              "label": "subscriptionId",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint64",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:38"
+            },
+            {
+              "label": "gasLimit",
+              "offset": 8,
+              "slot": "3",
+              "type": "t_uint32",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:39"
+            },
+            {
+              "label": "prices",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_string_memory_ptr,t_struct(PriceData)11862_storage)",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:51"
+            },
+            {
+              "label": "priceHistory",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_string_memory_ptr,t_array(t_struct(PriceData)11862_storage)dyn_storage)",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:52"
+            },
+            {
+              "label": "methodologies",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_array(t_string_storage)dyn_storage",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:54"
+            },
+            {
+              "label": "updateInterval",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:56"
+            },
+            {
+              "label": "lastUpdateTime",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:57"
+            },
+            {
+              "label": "highVolatilityThreshold",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:58"
+            },
+            {
+              "label": "priceFetcherSource",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_string_storage",
+              "contract": "CarbonPriceOracle",
+              "src": "contracts\\oracle\\CarbonPriceOracle.sol:62"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_string_storage)dyn_storage": {
+              "label": "string[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_struct(PriceData)11862_storage)dyn_storage": {
+              "label": "struct CarbonPriceOracle.PriceData[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_array(t_struct(PriceData)11862_storage)dyn_storage)": {
+              "label": "mapping(string => struct CarbonPriceOracle.PriceData[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_struct(PriceData)11862_storage)": {
+              "label": "mapping(string => struct CarbonPriceOracle.PriceData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_memory_ptr": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(PriceData)11862_storage": {
+              "label": "struct CarbonPriceOracle.PriceData",
+              "members": [
+                {
+                  "label": "price",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "timestamp",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "volume24h",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "confidence",
+                  "type": "t_uint8",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "dataPoints",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint32": {
+              "label": "uint32",
+              "numberOfBytes": "4"
+            },
+            "t_uint64": {
+              "label": "uint64",
+              "numberOfBytes": "8"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/oracle/EmissionVerifier.sol:EmissionVerifier": {
+        "src": "contracts\\oracle\\EmissionVerifier.sol:28",
+        "version": {
+          "withMetadata": "33afebbef804e9d4068106bafd727470f4a76cf0daf617c8ade966fcbd419cc7",
+          "withoutMetadata": "33afebbef804e9d4068106bafd727470f4a76cf0daf617c8ade966fcbd419cc7",
+          "linkedWithoutMetadata": "33afebbef804e9d4068106bafd727470f4a76cf0daf617c8ade966fcbd419cc7"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context",
+          "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatibleInterface.sol:AutomationCompatibleInterface",
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol:FunctionsClient",
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsClient.sol:IFunctionsClient"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol:FunctionsRequest"
+        ],
+        "methods": [
+          "(address,address)",
+          "registerProject(string,address,string,uint256,uint256,uint256,string,string,bytes32)",
+          "deactivateProject(string,string)",
+          "checkUpkeep(bytes)",
+          "performUpkeep(bytes)",
+          "requestVerification(string)",
+          "getProject(string)",
+          "getVerificationRequest(bytes32)",
+          "getProjectRequests(string)",
+          "getActiveProjectCount()",
+          "setFunctionsConfig(bytes32,uint64,uint32)",
+          "updateSourceCode(string)",
+          "grantAutomationRole(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "EmissionVerifier",
+            "src": "contracts\\oracle\\EmissionVerifier.sol:177"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "gasLimit",
+            "src": "contracts\\oracle\\EmissionVerifier.sol:47"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "nftContract",
+            "src": "contracts\\oracle\\EmissionVerifier.sol:50"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "emissionFetcherSource",
+            "src": "contracts\\oracle\\EmissionVerifier.sol:92"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:37"
+            },
+            {
+              "label": "functionsRouter",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_address",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:44"
+            },
+            {
+              "label": "donId",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_bytes32",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:45"
+            },
+            {
+              "label": "subscriptionId",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint64",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:46"
+            },
+            {
+              "label": "gasLimit",
+              "offset": 8,
+              "slot": "4",
+              "type": "t_uint32",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:47"
+            },
+            {
+              "label": "projects",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_string_memory_ptr,t_struct(Project)12584_storage)",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:80"
+            },
+            {
+              "label": "verificationRequests",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_bytes32,t_struct(VerificationRequest)12602_storage)",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:81"
+            },
+            {
+              "label": "projectRequests",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_string_memory_ptr,t_array(t_bytes32)dyn_storage)",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:82"
+            },
+            {
+              "label": "projectCreditsMinted",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_string_memory_ptr,t_uint256)",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:83"
+            },
+            {
+              "label": "activeProjects",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_array(t_string_storage)dyn_storage",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:85"
+            },
+            {
+              "label": "isProjectIndexed",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_mapping(t_string_memory_ptr,t_bool)",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:86"
+            },
+            {
+              "label": "emissionFetcherSource",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_string_storage",
+              "contract": "EmissionVerifier",
+              "src": "contracts\\oracle\\EmissionVerifier.sol:92"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_bytes32)dyn_storage": {
+              "label": "bytes32[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_string_storage)dyn_storage": {
+              "label": "string[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(VerificationRequest)12602_storage)": {
+              "label": "mapping(bytes32 => struct EmissionVerifier.VerificationRequest)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_array(t_bytes32)dyn_storage)": {
+              "label": "mapping(string => bytes32[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_bool)": {
+              "label": "mapping(string => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_struct(Project)12584_storage)": {
+              "label": "mapping(string => struct EmissionVerifier.Project)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_uint256)": {
+              "label": "mapping(string => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_memory_ptr": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(Project)12584_storage": {
+              "label": "struct EmissionVerifier.Project",
+              "members": [
+                {
+                  "label": "projectId",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "owner",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "methodology",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "baselineEmissions",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "targetReduction",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "lastVerificationTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "verificationInterval",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "iotEndpoint",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "satelliteRegion",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "auditorSignature",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "10"
+                }
+              ],
+              "numberOfBytes": "352"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_struct(VerificationRequest)12602_storage": {
+              "label": "struct EmissionVerifier.VerificationRequest",
+              "members": [
+                {
+                  "label": "requestId",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "projectId",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "requestTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "fulfilled",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "measuredEmissions",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "reductionAchieved",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "dataProofHash",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "confidenceScore",
+                  "type": "t_uint8",
+                  "offset": 0,
+                  "slot": "7"
+                }
+              ],
+              "numberOfBytes": "256"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint32": {
+              "label": "uint32",
+              "numberOfBytes": "4"
+            },
+            "t_uint64": {
+              "label": "uint64",
+              "numberOfBytes": "8"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/oracle/RegistrySync.sol:RegistrySync": {
+        "src": "contracts\\oracle\\RegistrySync.sol:24",
+        "version": {
+          "withMetadata": "d62052276097b0a040c30f24f15a2010e72f87621d614a810c646bd6a5982a7c",
+          "withoutMetadata": "d62052276097b0a040c30f24f15a2010e72f87621d614a810c646bd6a5982a7c",
+          "linkedWithoutMetadata": "d62052276097b0a040c30f24f15a2010e72f87621d614a810c646bd6a5982a7c"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context",
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol:FunctionsClient",
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsClient.sol:IFunctionsClient"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol:FunctionsRequest"
+        ],
+        "methods": [
+          "(address,address)",
+          "checkRegistry(string,string)",
+          "isCreditVerified(string,string)",
+          "isSerialUsed(string,string)",
+          "batchCheckRegistry(string,string[])",
+          "addRegistry(string,string)",
+          "setRegistryStatus(string,bool)",
+          "setFunctionsConfig(bytes32,uint64,uint32)",
+          "updateSourceCode(string)",
+          "getRegistryCheck(bytes32)",
+          "getRegistry(string)",
+          "getSupportedRegistries()",
+          "getRegistryStats(string)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "RegistrySync",
+            "src": "contracts\\oracle\\RegistrySync.sol:152"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "gasLimit",
+            "src": "contracts\\oracle\\RegistrySync.sol:40"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "nftContract",
+            "src": "contracts\\oracle\\RegistrySync.sol:42"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "registryCheckSource",
+            "src": "contracts\\oracle\\RegistrySync.sol:76"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:37"
+            },
+            {
+              "label": "functionsRouter",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_address",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:37"
+            },
+            {
+              "label": "donId",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_bytes32",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:38"
+            },
+            {
+              "label": "subscriptionId",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint64",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:39"
+            },
+            {
+              "label": "gasLimit",
+              "offset": 8,
+              "slot": "4",
+              "type": "t_uint32",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:40"
+            },
+            {
+              "label": "registryChecks",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_bytes32,t_struct(RegistryCheck)13695_storage)",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:67"
+            },
+            {
+              "label": "registries",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_string_memory_ptr,t_struct(Registry)13707_storage)",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:68"
+            },
+            {
+              "label": "registrySerials",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_string_memory_ptr,t_mapping(t_string_memory_ptr,t_bool))",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:69"
+            },
+            {
+              "label": "verifiedCredits",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_bytes32,t_bool)",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:70"
+            },
+            {
+              "label": "registryList",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_array(t_string_storage)dyn_storage",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:72"
+            },
+            {
+              "label": "registryCheckSource",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_string_storage",
+              "contract": "RegistrySync",
+              "src": "contracts\\oracle\\RegistrySync.sol:76"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_string_storage)dyn_storage": {
+              "label": "string[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_bool)": {
+              "label": "mapping(bytes32 => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RegistryCheck)13695_storage)": {
+              "label": "mapping(bytes32 => struct RegistrySync.RegistryCheck)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_bool)": {
+              "label": "mapping(string => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_mapping(t_string_memory_ptr,t_bool))": {
+              "label": "mapping(string => mapping(string => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_struct(Registry)13707_storage)": {
+              "label": "mapping(string => struct RegistrySync.Registry)",
+              "numberOfBytes": "32"
+            },
+            "t_string_memory_ptr": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(Registry)13707_storage": {
+              "label": "struct RegistrySync.Registry",
+              "members": [
+                {
+                  "label": "name",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "apiEndpoint",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "checksPerformed",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "duplicatesFound",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_struct(RegistryCheck)13695_storage": {
+              "label": "struct RegistrySync.RegistryCheck",
+              "members": [
+                {
+                  "label": "requestId",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "registry",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "serialNumber",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "requester",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "requestTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "fulfilled",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "existsInRegistry",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "5"
+                },
+                {
+                  "label": "registryStatus",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "registryProofHash",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "7"
+                }
+              ],
+              "numberOfBytes": "256"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint32": {
+              "label": "uint32",
+              "numberOfBytes": "4"
+            },
+            "t_uint64": {
+              "label": "uint64",
+              "numberOfBytes": "8"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/tests/MaliciousRetirer.sol:MaliciousRetirer": {
+        "src": "contracts\\tests\\MaliciousRetirer.sol:10",
+        "version": {
+          "withMetadata": "72f664ec1c34124de57c63fd61e4a129031e10982c2a0c8c925aed4da24af67c",
+          "withoutMetadata": "43b59af163025f8cffc14ef4ac9ff72869f6ad89d086eb1b95ed756a48ffd04c",
+          "linkedWithoutMetadata": "43b59af163025f8cffc14ef4ac9ff72869f6ad89d086eb1b95ed756a48ffd04c"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "attack(uint256,string)",
+          "()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MaliciousRetirer",
+            "src": "contracts\\tests\\MaliciousRetirer.sol:14"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "attacking",
+            "src": "contracts\\tests\\MaliciousRetirer.sol:12"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "nft",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_contract(CarbonCreditNFT)8683",
+              "contract": "MaliciousRetirer",
+              "src": "contracts\\tests\\MaliciousRetirer.sol:11"
+            },
+            {
+              "label": "attacking",
+              "offset": 20,
+              "slot": "0",
+              "type": "t_bool",
+              "contract": "MaliciousRetirer",
+              "src": "contracts\\tests\\MaliciousRetirer.sol:12"
+            }
+          ],
+          "types": {
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(CarbonCreditNFT)8683": {
+              "label": "contract CarbonCreditNFT",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/tests/MockERC20.sol:MockERC20": {
+        "src": "contracts\\tests\\MockERC20.sol:6",
+        "version": {
+          "withMetadata": "b28884770c3b611f6d259fda6a5036fd909944ea209ee1b08464f45a589a0b8b",
+          "withoutMetadata": "4efc10c576c630cba52d346c9060c1d2b122bf326ddd234bb43cb37ef64f9cbf",
+          "linkedWithoutMetadata": "4efc10c576c630cba52d346c9060c1d2b122bf326ddd234bb43cb37ef64f9cbf"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(string,string,uint8)",
+          "decimals()",
+          "mint(address,uint256)",
+          "burn(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockERC20",
+            "src": "contracts\\tests\\MockERC20.sol:9"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:39"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:41"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:43"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:45"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:46"
+            },
+            {
+              "label": "_decimals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint8",
+              "contract": "MockERC20",
+              "src": "contracts\\tests\\MockERC20.sol:7"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/tests/MockFunctionsRouter.sol:MockFunctionsRouter": {
+        "src": "contracts\\tests\\MockFunctionsRouter.sol:4",
+        "version": {
+          "withMetadata": "5d8571ecfd6d60dc45eba5c14ef22bcb231364a1de987806b5dd82a7b3d503ec",
+          "withoutMetadata": "5d559d9bf902d302d0b302b0a47e3fd0d33a17d37bce4abff03425e18b207f34",
+          "linkedWithoutMetadata": "5d559d9bf902d302d0b302b0a47e3fd0d33a17d37bce4abff03425e18b207f34"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "sendRequest(uint64,bytes,uint16,uint32,bytes32)",
+          "fulfillRequest(bytes32,bytes,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "pendingRequests",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_bool)",
+              "contract": "MockFunctionsRouter",
+              "src": "contracts\\tests\\MockFunctionsRouter.sol:5"
+            }
+          ],
+          "types": {
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_bool)": {
+              "label": "mapping(bytes32 => bool)",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/utils/Pausable.sol:EmergencyPausable": {
+        "src": "contracts\\utils\\Pausable.sol:12",
+        "version": {
+          "withMetadata": "ce96b8d991a970a8fdd047e2b4ed2406d7ee497df1499fdbf5321ab4f831835e",
+          "withoutMetadata": "ce96b8d991a970a8fdd047e2b4ed2406d7ee497df1499fdbf5321ab4f831835e",
+          "linkedWithoutMetadata": "ce96b8d991a970a8fdd047e2b4ed2406d7ee497df1499fdbf5321ab4f831835e"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/security/Pausable.sol:Pausable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "()",
+          "emergencyPause(string)",
+          "emergencyUnpause()",
+          "setTradingPause(bool)",
+          "setMintingPause(bool)",
+          "setOraclePause(bool)",
+          "initiateEmergencyExit(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "EmergencyPausable",
+            "src": "contracts\\utils\\Pausable.sol:32"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\security\\Pausable.sol:28"
+            },
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            },
+            {
+              "label": "tradingPaused",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_bool",
+              "contract": "EmergencyPausable",
+              "src": "contracts\\utils\\Pausable.sol:17"
+            },
+            {
+              "label": "mintingPaused",
+              "offset": 1,
+              "slot": "2",
+              "type": "t_bool",
+              "contract": "EmergencyPausable",
+              "src": "contracts\\utils\\Pausable.sol:18"
+            },
+            {
+              "label": "oraclePaused",
+              "offset": 2,
+              "slot": "2",
+              "type": "t_bool",
+              "contract": "EmergencyPausable",
+              "src": "contracts\\utils\\Pausable.sol:19"
+            },
+            {
+              "label": "pauseReason",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "EmergencyPausable",
+              "src": "contracts\\utils\\Pausable.sol:21"
+            },
+            {
+              "label": "pauseTimestamp",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "EmergencyPausable",
+              "src": "contracts\\utils\\Pausable.sol:22"
+            },
+            {
+              "label": "emergencyExitDeadline",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "EmergencyPausable",
+              "src": "contracts\\utils\\Pausable.sol:23"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.8/automation/AutomationBase.sol:AutomationBase": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\automation\\AutomationBase.sol:4",
+        "version": {
+          "withMetadata": "8d911b3fbd8f64e8384d5d8ccc9e3da623730ea6d08647e9a2028928d3c0679f",
+          "withoutMetadata": "db12cee82c0b61d41a3f406731f32d59d43e3328864896b25d38f32824fd2bb5",
+          "linkedWithoutMetadata": "db12cee82c0b61d41a3f406731f32d59d43e3328864896b25d38f32824fd2bb5"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol:AutomationCompatible": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\automation\\AutomationCompatible.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatibleInterface.sol:AutomationCompatibleInterface",
+          "@chainlink/contracts/src/v0.8/automation/AutomationBase.sol:AutomationBase"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatibleInterface.sol:AutomationCompatibleInterface": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\automation\\interfaces\\AutomationCompatibleInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "checkUpkeep(bytes)",
+          "performUpkeep(bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol:FunctionsClient": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\FunctionsClient.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsClient.sol:IFunctionsClient"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol:FunctionsRequest"
+        ],
+        "methods": [
+          "handleOracleFulfillment(bytes32,bytes,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "FunctionsClient",
+            "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\FunctionsClient.sol:21"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "i_router",
+            "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\FunctionsClient.sol:14"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsClient.sol:IFunctionsClient": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\interfaces\\IFunctionsClient.sol:5",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "handleOracleFulfillment(bytes32,bytes,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsRouter.sol:IFunctionsRouter": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\interfaces\\IFunctionsRouter.sol:7",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "getAllowListId()",
+          "setAllowListId(bytes32)",
+          "getAdminFee()",
+          "sendRequest(uint64,bytes,uint16,uint32,bytes32)",
+          "sendRequestToProposed(uint64,bytes,uint16,uint32,bytes32)",
+          "fulfill(bytes,bytes,uint96,uint96,address,(bytes32,address,uint96,address,uint64,uint32,uint72,uint72,uint40,uint40,uint32))",
+          "isValidCallbackGasLimit(uint64,uint32)",
+          "getContractById(bytes32)",
+          "getProposedContractById(bytes32)",
+          "getProposedContractSet()",
+          "proposeContractsUpdate(bytes32[],address[])",
+          "updateContracts()",
+          "pause()",
+          "unpause()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/interfaces/IFunctionsSubscriptions.sol:IFunctionsSubscriptions": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\interfaces\\IFunctionsSubscriptions.sol:7",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "getSubscription(uint64)",
+          "getSubscriptionsInRange(uint64,uint64)",
+          "getConsumer(address,uint64)",
+          "getTotalBalance()",
+          "getSubscriptionCount()",
+          "timeoutRequests(struct FunctionsResponse.Commitment[])",
+          "oracleWithdraw(address,uint96)",
+          "ownerCancelSubscription(uint64)",
+          "recoverFunds(address)",
+          "createSubscription()",
+          "createSubscriptionWithConsumer(address)",
+          "proposeSubscriptionOwnerTransfer(uint64,address)",
+          "acceptSubscriptionOwnerTransfer(uint64)",
+          "removeConsumer(uint64,address)",
+          "addConsumer(uint64,address)",
+          "cancelSubscription(uint64,address)",
+          "pendingRequestExists(uint64)",
+          "setFlags(uint64,bytes32)",
+          "getFlags(uint64)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol:FunctionsRequest": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\libraries\\FunctionsRequest.sol:7",
+        "version": {
+          "withMetadata": "e78feec90fcb8deedd3b13b32b64cf6ae9a18a5c8c53341fa069f0656ed6ffbd",
+          "withoutMetadata": "3641f0ebd00a694fe04c93eff26e6eb6a74cdc1ac3ab794d2b063e604ea7e4f9",
+          "linkedWithoutMetadata": "3641f0ebd00a694fe04c93eff26e6eb6a74cdc1ac3ab794d2b063e604ea7e4f9"
+        },
+        "inherit": [],
+        "libraries": [
+          "@chainlink/contracts/src/v0.8/vendor/solidity-cborutils/v2.0.0/CBOR.sol:CBOR"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsResponse.sol:FunctionsResponse": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\functions\\dev\\v1_0_0\\libraries\\FunctionsResponse.sol:7",
+        "version": {
+          "withMetadata": "ae5b9f4ff08082af07b1c5b9a48c4bf2748fd2d453bf28f01be21b05a9b181c6",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/vendor/@ensdomains/buffer/v0.1.0/Buffer.sol:Buffer": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\vendor\\@ensdomains\\buffer\\v0.1.0\\Buffer.sol:12",
+        "version": {
+          "withMetadata": "70d1bcdd9f7756ab1cad32fe2e3e487ffc116cd56dd7aaae83999f3cb1433926",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@chainlink/contracts/src/v0.8/vendor/solidity-cborutils/v2.0.0/CBOR.sol:CBOR": {
+        "src": "@chainlink\\contracts\\src\\v0.8\\vendor\\solidity-cborutils\\v2.0.0\\CBOR.sol:19",
+        "version": {
+          "withMetadata": "bb43ac2360833af0ab8169e8022c3b89d6e36ac4f3dd6baf4eb42cdf6a9fe495",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [
+          "@chainlink/contracts/src/v0.8/vendor/@ensdomains/buffer/v0.1.0/Buffer.sol:Buffer"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/access/AccessControl.sol:AccessControl": {
+        "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:50",
+        "inherit": [
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Strings.sol:Strings"
+        ],
+        "methods": [
+          "supportsInterface(bytes4)",
+          "hasRole(bytes32,address)",
+          "getRoleAdmin(bytes32)",
+          "grantRole(bytes32,address)",
+          "revokeRole(bytes32,address)",
+          "renounceRole(bytes32,address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:56"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)2322_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(RoleData)2322_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "members",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl": {
+        "src": "@openzeppelin\\contracts\\access\\IAccessControl.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "hasRole(bytes32,address)",
+          "getRoleAdmin(bytes32)",
+          "grantRole(bytes32,address)",
+          "revokeRole(bytes32,address)",
+          "renounceRole(bytes32,address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/interfaces/IERC4906.sol:IERC4906": {
+        "src": "@openzeppelin\\contracts\\interfaces\\IERC4906.sol:10",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/security/Pausable.sol:Pausable": {
+        "src": "@openzeppelin\\contracts\\security\\Pausable.sol:17",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "paused()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Pausable",
+            "src": "@openzeppelin\\contracts\\security\\Pausable.sol:33"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\security\\Pausable.sol:28"
+            }
+          ],
+          "types": {
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/security/ReentrancyGuard.sol:ReentrancyGuard": {
+        "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:22",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ReentrancyGuard",
+            "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:39"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\security\\ReentrancyGuard.sol:37"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:38",
+        "version": {
+          "withMetadata": "5784fd0c9b69184bafdeafa70327c6fc56812e2a51d9cff52e5a441d80b9bb0f",
+          "withoutMetadata": "5c880a403831e77bcb50b7145ddf2de0da091829f45515ecc5363d5eace185ca",
+          "linkedWithoutMetadata": "5c880a403831e77bcb50b7145ddf2de0da091829f45515ecc5363d5eace185ca"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(string,string)",
+          "name()",
+          "symbol()",
+          "decimals()",
+          "totalSupply()",
+          "balanceOf(address)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "increaseAllowance(address,uint256)",
+          "decreaseAllowance(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ERC20",
+            "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:54"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:39"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:41"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:43"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:45"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:46"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "totalSupply()",
+          "balanceOf(address)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol:ERC20Burnable": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Burnable.sol:14",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "burn(uint256)",
+          "burnFrom(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:39"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:41"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:43"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:45"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:46"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol:13",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20"
+        ],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "decimals()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol:IERC20Permit": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol:14",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)",
+          "nonces(address)",
+          "DOMAIN_SEPARATOR()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol:19",
+        "version": {
+          "withMetadata": "190b4df3a32443d2125c2064c01db12fb1d849c25e8386b00db9427fd17c1cc2",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Address.sol:Address"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:19",
+        "version": {
+          "withMetadata": "c214ccbe338891570b9c36804e46061266cdf3c5a7c6a09ee19cfcc2a6763eb0",
+          "withoutMetadata": "1c902cfcb8f3044226a047e19e3b189b8ca0d88f94386e71380d3c456c38ea43",
+          "linkedWithoutMetadata": "1c902cfcb8f3044226a047e19e3b189b8ca0d88f94386e71380d3c456c38ea43"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol:IERC721Metadata",
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Address.sol:Address",
+          "@openzeppelin/contracts/utils/Strings.sol:Strings"
+        ],
+        "methods": [
+          "(string,string)",
+          "supportsInterface(bytes4)",
+          "balanceOf(address)",
+          "ownerOf(uint256)",
+          "name()",
+          "symbol()",
+          "tokenURI(uint256)",
+          "approve(address,uint256)",
+          "getApproved(uint256)",
+          "setApprovalForAll(address,bool)",
+          "isApprovedForAll(address,address)",
+          "transferFrom(address,address,uint256)",
+          "safeTransferFrom(address,address,uint256)",
+          "safeTransferFrom(address,address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ERC721",
+            "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:44"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:24"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:27"
+            },
+            {
+              "label": "_owners",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:30"
+            },
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:33"
+            },
+            {
+              "label": "_tokenApprovals",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:36"
+            },
+            {
+              "label": "_operatorApprovals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:39"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+              "label": "mapping(address => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\IERC721.sol:11",
+        "inherit": [
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "ownerOf(uint256)",
+          "safeTransferFrom(address,address,uint256,bytes)",
+          "safeTransferFrom(address,address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "setApprovalForAll(address,bool)",
+          "getApproved(uint256)",
+          "isApprovedForAll(address,address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol:IERC721Receiver": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\IERC721Receiver.sol:11",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onERC721Received(address,address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol:ERC721Enumerable": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:14",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol:IERC721Enumerable",
+          "@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721",
+          "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol:IERC721Metadata",
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)",
+          "tokenOfOwnerByIndex(address,uint256)",
+          "totalSupply()",
+          "tokenByIndex(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:24"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:27"
+            },
+            {
+              "label": "_owners",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:30"
+            },
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:33"
+            },
+            {
+              "label": "_tokenApprovals",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:36"
+            },
+            {
+              "label": "_operatorApprovals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:39"
+            },
+            {
+              "label": "_ownedTokens",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:16"
+            },
+            {
+              "label": "_ownedTokensIndex",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:19"
+            },
+            {
+              "label": "_allTokens",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_array(t_uint256)dyn_storage",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:22"
+            },
+            {
+              "label": "_allTokensIndex",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "ERC721Enumerable",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol:25"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+              "label": "mapping(address => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+              "label": "mapping(address => mapping(uint256 => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol:ERC721URIStorage": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721URIStorage.sol:12",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721",
+          "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol:IERC721Metadata",
+          "@openzeppelin/contracts/interfaces/IERC4906.sol:IERC4906",
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Strings.sol:Strings"
+        ],
+        "methods": [
+          "supportsInterface(bytes4)",
+          "tokenURI(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:24"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_string_storage",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:27"
+            },
+            {
+              "label": "_owners",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:30"
+            },
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:33"
+            },
+            {
+              "label": "_tokenApprovals",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:36"
+            },
+            {
+              "label": "_operatorApprovals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "contract": "ERC721",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol:39"
+            },
+            {
+              "label": "_tokenURIs",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_string_storage)",
+              "contract": "ERC721URIStorage",
+              "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721URIStorage.sol:16"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+              "label": "mapping(address => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_string_storage)": {
+              "label": "mapping(uint256 => string)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol:IERC721Enumerable": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Enumerable.sol:12",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "totalSupply()",
+          "tokenOfOwnerByIndex(address,uint256)",
+          "tokenByIndex(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol:IERC721Metadata": {
+        "src": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Metadata.sol:12",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC721/IERC721.sol:IERC721",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "tokenURI(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Address.sol:Address": {
+        "src": "@openzeppelin\\contracts\\utils\\Address.sol:9",
+        "version": {
+          "withMetadata": "1c8add5dd1542f799b1c05190abeb7b42ded990aadd5d1573ab8ddf90a66eb74",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "delegatecall",
+            "src": "@openzeppelin\\contracts\\utils\\Address.sol:185"
+          },
+          {
+            "kind": "delegatecall",
+            "src": "@openzeppelin\\contracts\\utils\\Address.sol:185"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Counters.sol:Counters": {
+        "src": "@openzeppelin\\contracts\\utils\\Counters.sol:14",
+        "version": {
+          "withMetadata": "68f4e8ecec36b67b56b7d049133671e39292a9ba322f68548312fb46b23b1471",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Strings.sol:Strings": {
+        "src": "@openzeppelin\\contracts\\utils\\Strings.sol:12",
+        "version": {
+          "withMetadata": "e9d180e7c568144d72e62351c526b6b4ea8dbf46d116b15a346b3cc28be32adf",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [
+          "@openzeppelin/contracts/utils/math/Math.sol:Math",
+          "@openzeppelin/contracts/utils/math/SignedMath.sol:SignedMath"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol:22",
+        "inherit": [
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol:15",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/math/Math.sol:Math": {
+        "src": "@openzeppelin\\contracts\\utils\\math\\Math.sol:9",
+        "version": {
+          "withMetadata": "5a6c89f94ad0237a530c56796db06ed727208f01de070d2ff950686cf37296ae",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/math/SignedMath.sol:SignedMath": {
+        "src": "@openzeppelin\\contracts\\utils\\math\\SignedMath.sol:9",
+        "version": {
+          "withMetadata": "467633f059c43ab9a3db12415e1573879effed77eaf0c2413027a251b321fc6b",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/core/CarbonCreditNFT.sol:CarbonCreditNFT": {
+        "src": "contracts\\core\\CarbonCreditNFT.sol:23",
+        "version": {
           "withMetadata": "b49283eb44bab02d417418faf641a935ba1b715638c8eaaa6e3b3d624e2ca5b3",
           "withoutMetadata": "b49283eb44bab02d417418faf641a935ba1b715638c8eaaa6e3b3d624e2ca5b3",
           "linkedWithoutMetadata": "b49283eb44bab02d417418faf641a935ba1b715638c8eaaa6e3b3d624e2ca5b3"

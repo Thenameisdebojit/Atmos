@@ -1,6 +1,16 @@
 'use client';
 
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import {
+  metaMaskWallet,
+  rainbowWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+  injectedWallet,
+  braveWallet,
+  trustWallet,
+  rabbyWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig } from 'wagmi';
 import { polygon, polygonMumbai, hardhat, sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -49,17 +59,37 @@ const { chains, publicClient } = configureChains(
   [publicProvider()]
 );
 
-// Configure wallets
-const { connectors } = getDefaultWallets({
-  appName: 'ATMOS Carbon Credit Marketplace',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-project-id',
-  chains,
-});
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-project-id';
+const appName = 'ATMOS Carbon Credit Marketplace';
 
-// Create wagmi config
+// Explicit multi-wallet list: Connect modal will show all of these so users can choose.
+const walletGroups = [
+  {
+    groupName: 'Popular',
+    wallets: [
+      metaMaskWallet({ chains, projectId }),
+      rainbowWallet({ chains, projectId }),
+      coinbaseWallet({ appName, chains }),
+      walletConnectWallet({ chains, projectId }),
+      braveWallet({ chains }),
+      injectedWallet({ chains }),
+    ],
+  },
+  {
+    groupName: 'More options',
+    wallets: [
+      trustWallet({ chains, projectId }),
+      rabbyWallet({ chains }),
+    ],
+  },
+];
+
+const connectors = connectorsForWallets(walletGroups);
+
+// Create wagmi config (connectors can be function or array; wagmi accepts both)
 export const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors,
+  connectors: typeof connectors === 'function' ? connectors() : connectors,
   publicClient,
 });
 

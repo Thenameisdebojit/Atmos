@@ -152,6 +152,20 @@ export default function CompanyRegister() {
             toast.success(`5 credits minted to your wallet! TX: ${mintTxHash.slice(0, 10)}...`);
             setHasClaimedCredits(true);
 
+            // Step 2b: Store credits in official Carbon Wallet (depository)
+            try {
+              const { registerClaimCreditsInDepository } = await import('@/utils/api');
+              if (address) {
+                const { registered } = await registerClaimCreditsInDepository(address);
+                if (registered > 0) {
+                  toast.success(`${registered} credit(s) added to your Official Carbon Wallet.`);
+                }
+              }
+            } catch (depErr) {
+              console.error('Depository register claim:', depErr);
+              toast('Credits minted. Open Carbon Wallet to sync if needed.', { icon: 'ℹ️' });
+            }
+
             // Step 3: Approve NFTs for CCT wrapping
             const approveToast = toast.loading('Approving credits for trading...');
             try {
@@ -232,7 +246,7 @@ export default function CompanyRegister() {
                 <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 font-bold">2</div>
                 <div>
                   <p className="text-white font-semibold">Choose Your Wallet</p>
-                  <p className="text-gray-400 text-sm">Select MetaMask, WalletConnect, or another supported wallet</p>
+                  <p className="text-gray-400 text-sm">Select MetaMask, Coinbase, Rainbow, WalletConnect, or another wallet from the list</p>
                 </div>
               </div>
               

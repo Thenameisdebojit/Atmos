@@ -12,6 +12,11 @@ const app = express();
 app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 
+// Carbon Credit Depository (Phase 1–5: ledger, verification, settlement, KYC, audit export, rate limit)
+const { depositoryRateLimit } = require('./middleware/rateLimit');
+const depositoryRoutes = require('./routes/depository');
+app.use('/depository', depositoryRateLimit, depositoryRoutes);
+
 const adapter = new FileSync(DB_PATH);
 const db = low(adapter);
 

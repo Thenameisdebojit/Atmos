@@ -121,7 +121,7 @@ export default function TraderRegister() {
                 <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 font-bold">2</div>
                 <div>
                   <p className="text-white font-semibold">Choose Your Wallet</p>
-                  <p className="text-gray-400 text-sm">MetaMask, WalletConnect, or Coinbase Wallet</p>
+                  <p className="text-gray-400 text-sm">MetaMask, Coinbase, Rainbow, WalletConnect, Brave, or another wallet from the list</p>
                 </div>
               </div>
               

@@ -45,8 +45,20 @@
       "scope1Emissions": "2",
       "scope2Emissions": "30",
       "scope3Emissions": "19",
-      "registrationDate": 1771834052830,
-      "updatedAt": 1771834052884
+      "registrationDate": 1771870651868,
+      "updatedAt": 1771870651873
+    },
+    {
+      "walletAddress": "0x46661c1640a1674b6534903d8dce83b67eb2db32",
+      "name": "DM enterprises",
+      "legalEntityId": "164",
+      "email": "debojitmishra03@gmail.com",
+      "phone": "+919078834734",
+      "scope1Emissions": "2",
+      "scope2Emissions": "30",
+      "scope3Emissions": "19",
+      "registrationDate": 1771871389425,
+      "updatedAt": 1771871389430
     }
   ]
 }

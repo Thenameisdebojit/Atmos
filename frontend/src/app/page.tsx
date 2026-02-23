@@ -300,7 +300,7 @@ export default function LandingPage() {
                 </Link>
               </div>
               <p className="text-xs text-dark-500 mt-6 text-center">
-                Connect wallet to start. Beginner-friendly platform.
+                Connect with MetaMask, Coinbase, Rainbow, or any supported wallet. Beginner-friendly.
               </p>
             </Card>
           </div>

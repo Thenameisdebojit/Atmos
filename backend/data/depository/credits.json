@@ -1,0 +1,61 @@
+{
+  "credits": [
+    {
+      "creditId": "ATMOS-CC-00001",
+      "projectId": "proj-solar-alpha",
+      "co2Amount": 100,
+      "ownerId": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+      "status": "Active",
+      "methodology": "VERRA_VCS",
+      "vintageYear": 2024,
+      "geography": "IN",
+      "serialNumber": "SN-001",
+      "issuedAt": 1771865870834,
+      "auditHash": "d6411b406244c8f4fe8c100581a195efa259a4834e7c3dd1a10b05757eab97dc"
+    },
+    {
+      "creditId": "ATMOS-CC-00002",
+      "projectId": "proj-wind",
+      "co2Amount": 50,
+      "ownerId": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+      "status": "Retired",
+      "methodology": "VERRA_VCS",
+      "vintageYear": 2026,
+      "geography": "GLOBAL",
+      "serialNumber": "",
+      "issuedAt": 1771866608836,
+      "auditHash": "4b2f8b8e28abf3b7795ef89e836dd7190d1dc045ad610d2a268a0a758f199f1e",
+      "retiredAt": 1771866608842,
+      "retirementReason": "Scope 1 offset 2024"
+    },
+    {
+      "creditId": "ATMOS-CC-003",
+      "projectId": "p1",
+      "co2Amount": 1,
+      "ownerId": "0x5bf6176fe9c5b799cc919f40b5dc807c3eb538ce",
+      "status": "Active",
+      "methodology": "VERRA_VCS",
+      "vintageYear": 2026,
+      "geography": "GLOBAL",
+      "serialNumber": "VERRA-SN-UNIQUE-001",
+      "issuedAt": 1771866805147,
+      "auditHash": "2db2339f833a9a11fc3a5a1e87b0d8150fb4ccd772d823376fcd34e225048e8e"
+    },
+    {
+      "creditId": "ATMOS-CC-V2-002",
+      "projectId": "proj-verra-beta",
+      "co2Amount": 10,
+      "ownerId": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "status": "Active",
+      "methodology": "VERRA_VCS",
+      "vintageYear": 2026,
+      "geography": "GLOBAL",
+      "serialNumber": "",
+      "issuedAt": 1771868027045,
+      "auditHash": "a8019835e2cfb0a1b9c114927731f9daf4fbfade0cf95868bf67dd10afef0e3f",
+      "verificationSourceId": "verra-2",
+      "verifiedAt": 1771868027044,
+      "oracleProofHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ]
+}

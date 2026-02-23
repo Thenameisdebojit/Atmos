@@ -92,11 +92,20 @@ start "AtMoS Frontend" cmd /k "cd /d %~dp0 && npm --prefix frontend run dev"
 
 echo.
 echo ========================================
-echo  All set!
+echo  All set! AtMoS + Official Carbon Wallet
 echo ========================================
 echo  Hardhat node : running in "AtMoS Hardhat Node" window (port 8545)
-echo  Backend      : http://localhost:4000  (AtMoS Backend window)
+echo  Backend      : http://localhost:4000  (AtMoS Backend - depository, companies, API)
 echo  Frontend     : http://localhost:3001  (AtMoS Frontend window)
+echo.
+echo  CARBON WALLET (official depository):
+echo  - Open http://localhost:3001 and click "Carbon Wallet" in the nav (popup).
+echo  - Or go to http://localhost:3001/carbon-wallet for full page.
+echo  - Carbon credits are officially stored in the ATMOS Depository (backend).
+echo  - Claim credits: Register as Company (Company Register) to claim 5 free credits;
+echo    they are recorded on-chain AND in the official Carbon Wallet (depository).
+echo  - In Carbon Wallet you can set a password, view account number, official
+echo    certificate, ownership of credits, and retire credits.
 echo.
 echo  Open http://localhost:3001 in your browser.
 echo  Keep all three windows open while using the app.

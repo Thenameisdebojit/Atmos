@@ -1,0 +1,20 @@
+{
+  "validators": [
+    {
+      "id": "verra-1",
+      "name": "Verra VCS",
+      "type": "VERRA_VCS",
+      "identifier": "0x1111111111111111111111111111111111111111",
+      "isActive": true,
+      "createdAt": 1771867998736
+    },
+    {
+      "id": "verra-2",
+      "name": "Verra VCS",
+      "type": "VERRA_VCS",
+      "identifier": "0x1111111111111111111111111111111111111111",
+      "isActive": true,
+      "createdAt": 1771868027042
+    }
+  ]
+}

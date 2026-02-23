@@ -1,0 +1,24 @@
+{
+  "projects": [
+    {
+      "projectId": "proj-verra-alpha",
+      "name": "Solar Alpha",
+      "methodology": "VERRA_VCS",
+      "validatorId": "verra-1",
+      "verifiedAt": 1771867998738,
+      "oracleProofHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "isActive": true,
+      "createdAt": 1771867998738
+    },
+    {
+      "projectId": "proj-verra-beta",
+      "name": "Solar Beta",
+      "methodology": "VERRA_VCS",
+      "validatorId": "verra-2",
+      "verifiedAt": 1771868027043,
+      "oracleProofHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "isActive": true,
+      "createdAt": 1771868027043
+    }
+  ]
+}

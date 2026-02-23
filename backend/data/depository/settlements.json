@@ -1,0 +1,54 @@
+{
+  "settlements": [
+    {
+      "idempotencyKey": "idem-1771868388292",
+      "creditId": "ATMOS-CC-00001",
+      "fromOwner": "0x5bf6176fe9c5b799cc919f40b5dc807c3eb538ce",
+      "toOwner": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+      "sequenceId": 8,
+      "auditHash": "d6411b406244c8f4fe8c100581a195efa259a4834e7c3dd1a10b05757eab97dc",
+      "completedAt": 1771868388297,
+      "creditSnapshot": {
+        "creditId": "ATMOS-CC-00001",
+        "projectId": "proj-solar-alpha",
+        "co2Amount": 100,
+        "ownerId": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+        "status": "Active",
+        "methodology": "VERRA_VCS",
+        "vintageYear": 2024,
+        "geography": "IN",
+        "serialNumber": "SN-001",
+        "issuedAt": 1771865870834,
+        "auditHash": "d6411b406244c8f4fe8c100581a195efa259a4834e7c3dd1a10b05757eab97dc"
+      },
+      "settlementId": "STL-7BE75B2139302BCD"
+    },
+    {
+      "idempotencyKey": "q1",
+      "creditId": "ATMOS-CC-V2-002",
+      "fromOwner": "0x5bf6176fe9c5b799cc919f40b5dc807c3eb538ce",
+      "toOwner": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "sequenceId": 9,
+      "auditHash": "a8019835e2cfb0a1b9c114927731f9daf4fbfade0cf95868bf67dd10afef0e3f",
+      "completedAt": 1771868388305,
+      "creditSnapshot": {
+        "creditId": "ATMOS-CC-V2-002",
+        "projectId": "proj-verra-beta",
+        "co2Amount": 10,
+        "ownerId": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+        "status": "Active",
+        "methodology": "VERRA_VCS",
+        "vintageYear": 2026,
+        "geography": "GLOBAL",
+        "serialNumber": "",
+        "issuedAt": 1771868027045,
+        "auditHash": "a8019835e2cfb0a1b9c114927731f9daf4fbfade0cf95868bf67dd10afef0e3f",
+        "verificationSourceId": "verra-2",
+        "verifiedAt": 1771868027044,
+        "oracleProofHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "settlementId": "STL-DD19E7FFF7CECD93"
+    }
+  ],
+  "byIdempotencyKey": {}
+}

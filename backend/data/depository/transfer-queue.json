@@ -1,0 +1,46 @@
+{
+  "requests": [
+    {
+      "requestId": "TQR-806F39754854C16C",
+      "creditId": "ATMOS-CC-V2-002",
+      "fromOwner": "0x5bf6176fe9c5b799cc919f40b5dc807c3eb538ce",
+      "toOwner": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "idempotencyKey": "q1",
+      "status": "completed",
+      "createdAt": 1771868388302,
+      "updatedAt": 1771868388306,
+      "result": {
+        "credit": {
+          "creditId": "ATMOS-CC-V2-002",
+          "projectId": "proj-verra-beta",
+          "co2Amount": 10,
+          "ownerId": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+          "status": "Active",
+          "methodology": "VERRA_VCS",
+          "vintageYear": 2026,
+          "geography": "GLOBAL",
+          "serialNumber": "",
+          "issuedAt": 1771868027045,
+          "auditHash": "a8019835e2cfb0a1b9c114927731f9daf4fbfade0cf95868bf67dd10afef0e3f",
+          "verificationSourceId": "verra-2",
+          "verifiedAt": 1771868027044,
+          "oracleProofHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "sequenceId": 9,
+        "settlementId": "STL-DD19E7FFF7CECD93",
+        "auditHash": "a8019835e2cfb0a1b9c114927731f9daf4fbfade0cf95868bf67dd10afef0e3f",
+        "confirmation": {
+          "settlementId": "STL-DD19E7FFF7CECD93",
+          "sequenceId": 9,
+          "auditHash": "a8019835e2cfb0a1b9c114927731f9daf4fbfade0cf95868bf67dd10afef0e3f",
+          "creditId": "ATMOS-CC-V2-002",
+          "fromOwner": "0x5bf6176fe9c5b799cc919f40b5dc807c3eb538ce",
+          "toOwner": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+          "completedAt": 1771868388305
+        },
+        "idempotent": false
+      },
+      "error": null
+    }
+  ]
+}

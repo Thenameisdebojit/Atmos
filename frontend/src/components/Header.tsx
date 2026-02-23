@@ -1,15 +1,52 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Wallet } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useMemo } from 'react';
+import { useAccount } from 'wagmi';
 import { useUIStore } from '@/store';
 import { CONTRACTS } from '@/config/contracts';
+import { fetchCompanyProfile } from '@/utils/api';
+import { useContractInteraction } from '@/hooks/useContractInteraction';
+import { CarbonWalletModal } from '@/components/CarbonWalletModal';
 
 export const Header: React.FC = () => {
   const { isSidebarOpen, toggleSidebar } = useUIStore();
+  const { address, isConnected } = useAccount();
+  const { getTraderData } = useContractInteraction();
+
+  const [isCompany, setIsCompany] = useState<boolean | null>(null);
+  const [isTrader, setIsTrader] = useState<boolean | null>(null);
+  const [carbonWalletOpen, setCarbonWalletOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isConnected || !address) {
+      setIsCompany(null);
+      setIsTrader(null);
+      return;
+    }
+    let cancelled = false;
+    const check = async () => {
+      try {
+        const [companyProfile, traderData] = await Promise.all([
+          fetchCompanyProfile(address),
+          getTraderData(address),
+        ]);
+        if (!cancelled) {
+          setIsCompany(companyProfile != null);
+          setIsTrader(traderData != null);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsCompany(false);
+          setIsTrader(false);
+        }
+      }
+    };
+    check();
+    return () => { cancelled = true; };
+  }, [address, isConnected, getTraderData]);
 
   const missingConfig = useMemo(() => {
     const missing: string[] = [];
@@ -53,26 +90,37 @@ export const Header: React.FC = () => {
           <NavLink href="/marketplace">Marketplace</NavLink>
           <NavLink href="/auctions">Auctions</NavLink>
           <NavLink href="/portfolio">Portfolio</NavLink>
-          <div className="border-l border-slate-700 pl-6 flex items-center gap-6">
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-slate-500 uppercase tracking-wider">Companies</span>
-              <div className="flex items-center gap-4">
-                <NavLink href="/company/register">Register</NavLink>
-                <NavLink href="/company/dashboard">Dashboard</NavLink>
-                <NavLink href="/credit-requests">Credits</NavLink>
-                <NavLink href="/sell-credits">Sell</NavLink>
+          <button
+            type="button"
+            onClick={() => setCarbonWalletOpen(true)}
+            className="text-dark-300 hover:text-primary-400 font-medium transition-colors duration-200 flex items-center gap-1.5"
+          >
+            <Wallet className="w-4 h-4" /> Carbon Wallet
+          </button>
+          {isTrader !== true && (
+            <div className="border-l border-slate-700 pl-6 flex items-center gap-6">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-slate-500 uppercase tracking-wider">Companies</span>
+                <div className="flex items-center gap-4">
+                  <NavLink href="/company/register">Register</NavLink>
+                  <NavLink href="/company/dashboard">Dashboard</NavLink>
+                  <NavLink href="/credit-requests">Credits</NavLink>
+                  <NavLink href="/sell-credits">Sell</NavLink>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="border-l border-slate-700 pl-6 flex items-center gap-6">
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-slate-500 uppercase tracking-wider">Traders</span>
-              <div className="flex items-center gap-4">
-                <NavLink href="/trader/register">Register</NavLink>
-                <NavLink href="/trader/dashboard">Dashboard</NavLink>
+          )}
+          {isCompany !== true && (
+            <div className="border-l border-slate-700 pl-6 flex items-center gap-6">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-slate-500 uppercase tracking-wider">Traders</span>
+                <div className="flex items-center gap-4">
+                  <NavLink href="/trader/register">Register</NavLink>
+                  <NavLink href="/trader/dashboard">Dashboard</NavLink>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </nav>
 
         {/* Right Actions */}
@@ -93,6 +141,7 @@ export const Header: React.FC = () => {
           </button>
         </div>
       </div>
+      <CarbonWalletModal isOpen={carbonWalletOpen} onClose={() => setCarbonWalletOpen(false)} />
     </header>
   );
 };

@@ -1,0 +1,40 @@
+{
+  "companies": [
+    {
+      "walletAddress": "0x5bf6176fe9c5b799cc919f40b5dc807c3eb538ce",
+      "name": "Drath",
+      "legalEntityId": "240301120163",
+      "email": "drath@gmail.com",
+      "phone": "6372434210",
+      "scope1Emissions": "2",
+      "scope2Emissions": "2",
+      "scope3Emissions": "0",
+      "registrationDate": 1771431817240,
+      "updatedAt": 1771431817260
+    },
+    {
+      "walletAddress": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+      "name": "Drath",
+      "legalEntityId": "240301120163",
+      "email": "company@gmail.com",
+      "phone": "5559998887",
+      "scope1Emissions": "1",
+      "scope2Emissions": "1",
+      "scope3Emissions": "0",
+      "registrationDate": 1771498520139,
+      "updatedAt": 1771498520230
+    },
+    {
+      "walletAddress": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "name": "test",
+      "legalEntityId": "554",
+      "email": "hello@gmail.com",
+      "phone": "1234567891",
+      "scope1Emissions": "0",
+      "scope2Emissions": "0",
+      "scope3Emissions": "0",
+      "registrationDate": 1771498572447,
+      "updatedAt": 1771498572451
+    }
+  ]
+}

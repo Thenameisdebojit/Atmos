@@ -1,0 +1,374 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ICarbonCreditNFT",
+  "sourceName": "contracts/interfaces/ICarbonCreditNFT.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "projectId",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "co2Tonnes",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "methodology",
+          "type": "string"
+        }
+      ],
+      "name": "CreditMinted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "retiredBy",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "co2Tonnes",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "CreditRetired",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "batchRetire",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCreditDetails",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "projectId",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "projectName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "methodology",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "co2Tonnes",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "vintageYear",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "geography",
+              "type": "string"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "oracleProofHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "satelliteDataCID",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "verificationSource",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "verificationDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isRetired",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "issuanceDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "serialNumber",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ICarbonCreditNFT.CarbonCredit",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getGlobalStats",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minted",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "retired",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "active",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalTokens",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRetirementCertificate",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "originalTokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "retiredBy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "retirementDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "retirementReason",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "co2Tonnes",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ICarbonCreditNFT.RetirementCertificate",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "methodology",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "serialNumber",
+          "type": "string"
+        }
+      ],
+      "name": "isSerialTokenized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "projectId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "projectName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "serialNumber",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "methodology",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "co2Tonnes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vintageYear",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "geography",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "oracleProofHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "satelliteDataCID",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "tokenURI",
+          "type": "string"
+        }
+      ],
+      "name": "mintCredit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "retireCredit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

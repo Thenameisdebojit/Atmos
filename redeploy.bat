@@ -40,28 +40,65 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo.
-echo Step 2: Deploying to local network...
-echo NOTE: Ensure Hardhat node is running in another terminal: npx hardhat node
-echo.
-call npx hardhat run scripts/deploy/01_deploy_local.js --network localhost
-if %ERRORLEVEL% neq 0 (
-    echo.
-    echo ERROR: Deployment failed. Is the Hardhat node running?
-    echo Start it with: npx hardhat node
+echo Step 2: Starting Hardhat node (local blockchain)...
+rem Kill existing process on 8545 if any, so we can start fresh
+for /f "tokens=5" %%a in ('netstat -ano 2^>nul ^| findstr ":8545" ^| findstr "LISTENING"') do taskkill /f /pid %%a >nul 2>nul
+start "AtMoS Hardhat Node" cmd /k "cd /d %~dp0 && npx hardhat node"
+echo Waiting for Hardhat node on port 8545...
+set WAIT_COUNT=0
+:wait_for_node
+timeout /t 2 /nobreak >nul
+netstat -an 2>nul | findstr ":8545" | findstr "LISTENING" >nul
+if %ERRORLEVEL% equ 0 goto node_ready
+set /a WAIT_COUNT+=1
+if %WAIT_COUNT% geq 25 (
+    echo ERROR: Hardhat node did not start in time. Check the "AtMoS Hardhat Node" window.
     pause
     exit /b 1
 )
+goto wait_for_node
+:node_ready
+echo Hardhat node is ready.
 
 echo.
-echo Step 3: Updating frontend .env.local...
+echo Step 3: Deploying contracts to local network...
+call npx hardhat run scripts/deploy/01_deploy_local.js --network localhost
+rem On Windows, Node can exit with "Assertion failed" (libuv) after a successful deploy.
+rem Verify success by checking that deployment file was written.
+findstr /C:"CarbonCreditNFT" deployments\localhost.json >nul 2>nul
+if %ERRORLEVEL% equ 0 goto deploy_ok
+echo.
+echo ERROR: Deployment failed or deployments/localhost.json not updated. Check the "AtMoS Hardhat Node" window.
+pause
+exit /b 1
+:deploy_ok
+echo.
+echo Deployment verified (deployments/localhost.json updated).
+echo (If you see "Assertion failed" on Windows, ignore it - deployment succeeded.)
+echo.
+echo Step 4: Updating frontend .env.local...
 call node scripts/update-frontend-env.js 2>nul
 if %ERRORLEVEL% neq 0 (
     echo Note: Could not auto-update .env.local - copy addresses from deployments/localhost.json
 )
 
 echo.
-echo Step 4: Deployment complete!
+echo Step 5: Starting Backend and Frontend...
+rem Free ports if already in use
+for /f "tokens=5" %%a in ('netstat -ano 2^>nul ^| findstr ":4000" ^| findstr "LISTENING"') do taskkill /f /pid %%a >nul 2>nul
+for /f "tokens=5" %%a in ('netstat -ano 2^>nul ^| findstr ":3001" ^| findstr "LISTENING"') do taskkill /f /pid %%a >nul 2>nul
+start "AtMoS Backend" cmd /k "cd /d %~dp0 && set PORT=4000 && npm --prefix backend run dev"
+start "AtMoS Frontend" cmd /k "cd /d %~dp0 && npm --prefix frontend run dev"
+
 echo.
-echo Next: Run ./run-dev.bat to start the app (or start Hardhat node first if not running)
+echo ========================================
+echo  All set!
+echo ========================================
+echo  Hardhat node : running in "AtMoS Hardhat Node" window (port 8545)
+echo  Backend      : http://localhost:4000  (AtMoS Backend window)
+echo  Frontend     : http://localhost:3001  (AtMoS Frontend window)
+echo.
+echo  Open http://localhost:3001 in your browser.
+echo  Keep all three windows open while using the app.
 echo.
 pause

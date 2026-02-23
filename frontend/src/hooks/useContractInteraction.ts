@@ -460,27 +460,60 @@ export const useContractInteraction = () => {
     [walletClient, address]
   );
 
-  // Register and claim free credits (public function, no role required)
+  // Read whether the address has already claimed registration credits (one-time per wallet)
+  const getHasRegistered = useCallback(
+    async (userAddress: string) => {
+      if (!publicClient || !userAddress) return false;
+      try {
+        ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', CONTRACTS.carbonCreditNFT);
+        const result = await publicClient.readContract({
+          address: CONTRACTS.carbonCreditNFT as `0x${string}`,
+          abi: parseAbi(['function hasRegistered(address) view returns (bool)']),
+          functionName: 'hasRegistered',
+          args: [userAddress as `0x${string}`],
+        });
+        return Boolean(result);
+      } catch (error) {
+        console.error('Error reading hasRegistered:', error);
+        return false;
+      }
+    },
+    [publicClient]
+  );
+
+  // Register and claim free credits (public function, no role required). Waits for tx receipt so success = credits minted.
   const registerAndClaimCredits = useCallback(
     async () => {
-      if (!walletClient || !address) return null;
+      if (!walletClient || !address || !publicClient) return null;
       try {
         ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', CONTRACTS.carbonCreditNFT);
         const hash = await walletClient.writeContract({
-          address: CONTRACTS.carbonCreditNFT,
+          address: CONTRACTS.carbonCreditNFT as `0x${string}`,
           abi: parseAbi([
-            'function registerAndClaimCredits() public returns (uint256[] memory)',
+            'function registerAndClaimCredits() external returns (uint256[] memory)',
           ]),
           functionName: 'registerAndClaimCredits',
           account: address,
         });
+        if (!hash) return null;
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        if (receipt.status === 'reverted') {
+          throw new Error('Transaction reverted. You may have already claimed your 5 credits, or the contract may be paused.');
+        }
         return hash;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error claiming registration credits:', error);
+        const msg = error instanceof Error ? error.message : String(error);
+        if (msg.includes('Already claimed') || msg.includes('hasRegistered')) {
+          throw new Error('Already claimed registration credits');
+        }
+        if (msg.includes('User denied') || msg.includes('rejected')) {
+          throw new Error('Transaction was rejected. Please approve the transaction in your wallet to receive your 5 credits.');
+        }
         throw error;
       }
     },
-    [walletClient, address]
+    [walletClient, address, publicClient]
   );
 
   // Create buy order
@@ -970,6 +1003,7 @@ export const useContractInteraction = () => {
     getCompanyEmissions,
     getCompanyData,
     getTraderData,
+    getHasRegistered,
     
     // Write functions
     mintCredit,

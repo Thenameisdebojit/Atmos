@@ -12,8 +12,10 @@ import { fetchCompanyProfile, saveCompanyProfile, CompanyProfile } from '@/utils
 export default function CompanyRegister() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
-  const { registerCompany, registerAndClaimCredits, approveNftForAll, isLoading } = useContractInteraction();
+  const { registerCompany, registerAndClaimCredits, approveNftForAll, getHasRegistered, isLoading } = useContractInteraction();
   const onChainEnabled = process.env.NEXT_PUBLIC_ENABLE_ONCHAIN_COMPANY_REGISTRATION === 'true';
+
+  const [hasClaimedCredits, setHasClaimedCredits] = useState<boolean | null>(null);
 
   const [formData, setFormData] = useState({
     companyName: '',
@@ -58,6 +60,12 @@ export default function CompanyRegister() {
 
     loadProfile();
   }, [isConnected, address]);
+
+  // Check on-chain if this wallet has already claimed registration credits
+  useEffect(() => {
+    if (!isConnected || !address || !getHasRegistered) return;
+    getHasRegistered(address).then(setHasClaimedCredits).catch(() => setHasClaimedCredits(null));
+  }, [isConnected, address, getHasRegistered]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -131,44 +139,52 @@ export default function CompanyRegister() {
       toast.dismiss(loadingToast);
       toast.success('Company profile saved!');
 
-      // Step 2: Claim 5 free carbon credits
-      const mintToast = toast.loading('Claiming 5 free carbon credits...');
-      try {
-        const mintTxHash = await registerAndClaimCredits();
-        if (mintTxHash) {
-          toast.dismiss(mintToast);
-          toast.success(`Credits claimed! TX: ${mintTxHash.slice(0, 10)}...`);
-          
-          // Step 3: Approve NFTs for CCT wrapping
-          const approveToast = toast.loading('Approving credits for trading...');
-          try {
-            const approveTxHash = await approveNftForAll(
-              process.env.NEXT_PUBLIC_CARBON_CREDIT_NFT!,
-              process.env.NEXT_PUBLIC_CARBON_CREDIT_TOKEN!,
-              true
-            );
-            
-            if (approveTxHash) {
+      // Step 2: Claim 5 free carbon credits (on-chain; wallet will prompt to sign)
+      const alreadyClaimed = hasClaimedCredits ?? (address ? await getHasRegistered(address) : false);
+      if (alreadyClaimed) {
+        toast('You have already claimed your 5 registration credits.', { icon: '✅' });
+      } else {
+        const mintToast = toast.loading('Claiming 5 free carbon credits… Please approve the transaction in your wallet.');
+        try {
+          const mintTxHash = await registerAndClaimCredits();
+          if (mintTxHash) {
+            toast.dismiss(mintToast);
+            toast.success(`5 credits minted to your wallet! TX: ${mintTxHash.slice(0, 10)}...`);
+            setHasClaimedCredits(true);
+
+            // Step 3: Approve NFTs for CCT wrapping
+            const approveToast = toast.loading('Approving credits for trading...');
+            try {
+              const approveTxHash = await approveNftForAll(
+                process.env.NEXT_PUBLIC_CARBON_CREDIT_NFT!,
+                process.env.NEXT_PUBLIC_CARBON_CREDIT_TOKEN!,
+                true
+              );
+
+              if (approveTxHash) {
+                toast.dismiss(approveToast);
+                toast.success('Credits approved! You can now wrap and trade them.');
+              }
+            } catch (approveError) {
+              console.error('Approve error:', approveError);
               toast.dismiss(approveToast);
-              toast.success('Credits approved! You can now wrap and trade them.');
+              toast('Credits claimed but approval failed. You can approve manually later.', {
+                icon: '⚠️',
+              });
             }
-          } catch (approveError) {
-            console.error('Approve error:', approveError);
-            toast.dismiss(approveToast);
-            toast('Credits claimed but approval failed. You can approve manually later.', {
-              icon: '⚠️',
-            });
           }
-        }
-      } catch (mintError: any) {
-        console.error('Mint error:', mintError);
-        toast.dismiss(mintToast);
-        
-        // Check if already claimed
-        if (mintError?.message?.includes('Already claimed')) {
-          toast.error('You have already claimed your registration credits!');
-        } else {
-          toast.error('Failed to claim credits: ' + (mintError?.message || 'Unknown error'));
+        } catch (mintError: unknown) {
+          console.error('Mint error:', mintError);
+          toast.dismiss(mintToast);
+          const msg = mintError instanceof Error ? mintError.message : String(mintError);
+          if (msg.includes('Already claimed')) {
+            toast.error('You have already claimed your registration credits.');
+            setHasClaimedCredits(true);
+          } else if (msg.includes('rejected') || msg.includes('denied')) {
+            toast.error('Transaction was rejected. To receive your 5 credits, please approve the transaction when your wallet asks for a signature.');
+          } else {
+            toast.error('Failed to claim credits: ' + msg);
+          }
         }
       }
 
@@ -385,17 +401,34 @@ export default function CompanyRegister() {
               </p>
             </div>
 
+            {hasClaimedCredits && (
+              <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg mb-4">
+                <p className="text-sm text-green-400">
+                  You have already claimed your 5 registration credits for this wallet. You can still update your company profile below.
+                </p>
+              </div>
+            )}
+
             {/* Submit Button */}
             <Button
               type="submit"
               disabled={isSubmitting || isLoading}
               className="w-full"
             >
-              {isSubmitting ? 'Registering & Minting Credits...' : 'Register & Get 5 Free Credits'}
+              {isSubmitting
+                ? 'Registering & Minting Credits...'
+                : hasClaimedCredits
+                  ? 'Update Company Profile'
+                  : 'Register & Get 5 Free Credits'}
             </Button>
 
-            <p className="text-xs text-gray-400 text-center">
-              By registering, you'll receive 5 carbon credit NFTs that you can trade or sell immediately
+            {!hasClaimedCredits && (
+              <p className="text-xs text-amber-400/90 text-center mt-2">
+                Your wallet will ask you to sign one transaction to mint 5 credits to your address. Approve it to receive the credits.
+              </p>
+            )}
+            <p className="text-xs text-gray-400 text-center mt-1">
+              By registering, you'll receive 5 carbon credit NFTs that you can trade or sell immediately (one-time per wallet).
             </p>
           </form>
         </Card>

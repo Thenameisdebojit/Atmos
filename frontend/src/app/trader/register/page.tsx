@@ -11,7 +11,7 @@ import { useContractInteraction } from '@/hooks/useContractInteraction';
 export default function TraderRegister() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
-  const { registerTrader, isLoading } = useContractInteraction();
+  const { registerTrader, isLoading, publicClient } = useContractInteraction();
 
   const [formData, setFormData] = useState({
     traderName: '',
@@ -75,8 +75,19 @@ export default function TraderRegister() {
         walletAddress: address,
       });
 
+      if (!txHash) {
+        throw new Error('Registration transaction was cancelled or failed');
+      }
+
+      if (publicClient) {
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        if (receipt.status !== 'success') {
+          throw new Error('Registration transaction reverted');
+        }
+      }
+
       toast.dismiss(loadingToast);
-      toast.success(`Trader account created! TX: ${txHash?.slice(0, 10)}...`);
+      toast.success(`Trader account created! TX: ${txHash.slice(0, 10)}...`);
 
       setTimeout(() => {
         router.push('/trader/dashboard');
@@ -84,7 +95,18 @@ export default function TraderRegister() {
     } catch (error: any) {
       toast.dismiss(loadingToast);
       console.error('Registration error:', error);
-      toast.error(error?.message || 'Failed to register trader account');
+      const errorMessage = error?.shortMessage || error?.message || 'Failed to register trader account';
+      const normalized = String(errorMessage).toLowerCase();
+      if (
+        normalized.includes('user rejected') ||
+        normalized.includes('rejected') ||
+        normalized.includes('cancelled') ||
+        normalized.includes('denied')
+      ) {
+        toast.error('Transaction cancelled in wallet');
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }

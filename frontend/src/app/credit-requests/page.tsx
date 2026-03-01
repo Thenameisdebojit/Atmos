@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { Header } from '@/components/Header';
 import { Card, Button, Input, StatCard } from '@/components/UI';
 import toast from 'react-hot-toast';
 import { useContractInteraction } from '@/hooks/useContractInteraction';
 import { CONTRACTS } from '@/config/contracts';
+import { notifyTradeSuccess, requestNotificationPermission } from '@/utils/notifications';
+import { formatCurrency, formatCarbonTonnes } from '@/utils/format';
+import { Wallet, Zap, RefreshCw } from 'lucide-react';
 
 interface OrderRow {
   orderId: number;
@@ -27,7 +30,9 @@ export default function CreditRequests() {
     fillOrder,
     getMarketplaceOrders,
     getErc20Allowance,
+    getErc20Balance,
     approveErc20,
+    publicClient,
   } = useContractInteraction();
 
   const [tab, setTab] = useState<'request' | 'browse' | 'my-requests'>('browse');
@@ -39,29 +44,57 @@ export default function CreditRequests() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requestedCredits, setRequestedCredits] = useState<OrderRow[]>([]);
   const [availableCredits, setAvailableCredits] = useState<OrderRow[]>([]);
+  const [buyAmounts, setBuyAmounts] = useState<{ [orderId: number]: string }>({});
+  const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
+  const [cctBalance, setCctBalance] = useState<number | null>(null);
+  const [balanceRefreshing, setBalanceRefreshing] = useState(false);
+
+  const loadBalances = useCallback(async () => {
+    if (!isConnected || !address) return;
+    setBalanceRefreshing(true);
+    try {
+      const [usdc, cct] = await Promise.all([
+        getErc20Balance(CONTRACTS.usdc, address).catch(() => 0),
+        getErc20Balance(CONTRACTS.carbonCreditToken, address).catch(() => 0),
+      ]);
+      setUsdcBalance(usdc);
+      setCctBalance(cct);
+    } catch {
+      // silently fail
+    } finally {
+      setBalanceRefreshing(false);
+    }
+  }, [isConnected, address, getErc20Balance]);
+
+  const loadOrders = useCallback(async () => {
+    try {
+      const orders = await getMarketplaceOrders();
+      const sellOrders = (orders || []).filter((order) => !order.isBuyOrder && order.isActive && (order.amount - order.filled) > 0);
+      const buyOrders = (orders || []).filter((order) => order.isBuyOrder && order.isActive);
+
+      setAvailableCredits(sellOrders);
+      setRequestedCredits(
+        buyOrders.filter((order) => order.trader.toLowerCase() === address?.toLowerCase())
+      );
+
+      const amounts: { [orderId: number]: string } = {};
+      sellOrders.forEach(order => {
+        amounts[order.orderId] = (order.amount - order.filled).toFixed(2);
+      });
+      setBuyAmounts(amounts);
+    } catch (error) {
+      // Error loading orders silently
+    }
+  }, [getMarketplaceOrders, address]);
 
   useEffect(() => {
     if (!isConnected || !address) {
       return;
     }
-
-    const loadOrders = async () => {
-      try {
-        const orders = await getMarketplaceOrders();
-        const sellOrders = (orders || []).filter((order) => !order.isBuyOrder);
-        const buyOrders = (orders || []).filter((order) => order.isBuyOrder);
-
-        setAvailableCredits(sellOrders);
-        setRequestedCredits(
-          buyOrders.filter((order) => order.trader.toLowerCase() === address.toLowerCase())
-        );
-      } catch (error) {
-        console.error('Error loading orders:', error);
-      }
-    };
-
+    requestNotificationPermission();
     loadOrders();
-  }, [isConnected, address, getMarketplaceOrders]);
+    loadBalances();
+  }, [isConnected, address, loadOrders, loadBalances]);
 
 
 
@@ -121,31 +154,54 @@ export default function CreditRequests() {
       toast.dismiss(orderToast);
       
       if (txHash) {
+        if (publicClient) {
+          const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+          if (receipt.status !== 'success') {
+            throw new Error('Buy order transaction reverted');
+          }
+        }
         toast.success(`Buy order created! TX: ${txHash.slice(0, 10)}...`);
+        notifyTradeSuccess('buy', amount, price, txHash);
       } else {
-        toast.error('Failed to create buy order');
-        setIsSubmitting(false);
-        return;
+        throw new Error('Buy order transaction was cancelled or failed');
       }
 
       setFormData({ creditAmount: '', maxPricePerTonne: '', deadline: '' });
       setTab('my-requests');
+      await Promise.all([loadOrders(), loadBalances()]);
     } catch (error: any) {
       toast.dismiss(loadingToast);
       console.error('Error:', error);
-      toast.error(error?.message || 'Failed to submit request');
+      const errorMessage = error?.shortMessage || error?.message || 'Failed to submit request';
+      const normalized = String(errorMessage).toLowerCase();
+      if (
+        normalized.includes('user rejected') ||
+        normalized.includes('rejected') ||
+        normalized.includes('cancelled') ||
+        normalized.includes('denied')
+      ) {
+        toast.error('Transaction cancelled in wallet');
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleBuyCredit = async (orderId: number, amount: number, price: number) => {
+  const handleBuyCredit = async (orderId: number, maxAvailable: number, price: number) => {
     if (!isConnected) {
       toast.error('Please connect wallet');
       return;
     }
 
-    const confirmToast = toast.loading(`Buying ${amount} credits at $${price}/ton...`);
+    const amount = parseFloat(buyAmounts[orderId] || '0');
+    if (amount <= 0 || amount > maxAvailable) {
+      toast.error(`Please enter a valid amount (0 < amount <= ${maxAvailable})`);
+      return;
+    }
+
+    const confirmToast = toast.loading(`Processing purchase...`);
 
     try {
       const totalCost = amount * price;
@@ -156,26 +212,46 @@ export default function CreditRequests() {
       );
 
       if (allowance < totalCost) {
-        const approveTx = await approveErc20(CONTRACTS.usdc, CONTRACTS.carbonMarketplace, totalCost);
+        toast.dismiss(confirmToast);
+        toast.loading('Approving USDC...');
+        const approveTx = await approveErc20(
+          CONTRACTS.usdc,
+          CONTRACTS.carbonMarketplace,
+          totalCost,
+          true // wait for confirmation
+        );
         if (!approveTx) {
-          toast.dismiss(confirmToast);
-          toast.error('USDC approval failed');
-          return;
+          throw new Error('USDC approval failed');
         }
-        toast.success('USDC approved! Completing purchase...');
+        toast.dismiss();
+        toast.success('USDC approved!');
       }
 
+      toast.loading('Filling order...');
       const txHash = await fillOrder(orderId, amount);
+      if (!txHash) {
+        throw new Error('Fill order transaction failed');
+      }
 
-      toast.dismiss(confirmToast);
-      toast.success('Credits purchased successfully!');
+      // Wait for fill transaction confirmation
+      if (publicClient) {
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+      }
 
-      // Remove from available
-      setAvailableCredits(availableCredits.filter(c => c.orderId !== orderId));
+      toast.dismiss();
+      toast.success(`Purchased ${amount} credits successfully!`);
+      notifyTradeSuccess('buy', amount, price, txHash);
+      await Promise.all([loadOrders(), loadBalances()]);
     } catch (error: any) {
-      toast.dismiss(confirmToast);
-      console.error('Error:', error);
-      toast.error(error?.message || 'Purchase failed');
+      toast.dismiss();
+      console.error('Purchase error:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        shortMessage: error?.shortMessage,
+        cause: error?.cause,
+        metaMessages: error?.metaMessages
+      });
+      toast.error(error?.message || error?.shortMessage || 'Purchase failed');
     }
   };
 
@@ -216,6 +292,32 @@ export default function CreditRequests() {
           <p className="text-gray-400">Request credits or buy from sellers</p>
         </div>
 
+        {/* Wallet Balances */}
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5">
+            <Wallet className="w-4 h-4 text-emerald-400" />
+            <span className="text-gray-400 text-sm">USDC</span>
+            <span className="font-semibold text-lg text-white">
+              {usdcBalance !== null ? formatCurrency(usdcBalance) : '\u2014'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5">
+            <Zap className="w-4 h-4 text-green-400" />
+            <span className="text-gray-400 text-sm">CCT</span>
+            <span className="font-semibold text-lg text-white">
+              {cctBalance !== null ? formatCarbonTonnes(cctBalance) : '\u2014'}
+            </span>
+          </div>
+          <button
+            onClick={() => loadBalances()}
+            disabled={balanceRefreshing}
+            className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-colors disabled:opacity-50"
+            title="Refresh balances"
+          >
+            <RefreshCw className={`w-4 h-4 text-gray-400 ${balanceRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <StatCard
@@ -238,7 +340,7 @@ export default function CreditRequests() {
           />
           <StatCard
             label="Available Credits"
-            value={availableCredits.reduce((sum, c) => sum + c.amount, 0).toFixed(0)}
+            value={availableCredits.reduce((sum, c) => sum + (c.amount - c.filled), 0).toFixed(0)}
             subtext="tonnes"
             change={18}
           />
@@ -284,8 +386,11 @@ export default function CreditRequests() {
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <p className="text-gray-400">Amount Available</p>
-                          <p className="text-white font-bold text-lg">{credit.amount}</p>
+                          <p className="text-white font-bold text-lg">{(credit.amount - credit.filled).toFixed(2)}</p>
                           <p className="text-gray-500 text-xs">tonnes CO₂</p>
+                          {credit.filled > 0 && (
+                            <p className="text-gray-600 text-xs mt-1">({credit.filled.toFixed(1)} filled)</p>
+                          )}
                         </div>
                         <div>
                           <p className="text-gray-400">Price</p>
@@ -299,15 +404,17 @@ export default function CreditRequests() {
                           <input
                             type="number"
                             placeholder="Amount to buy"
-                            min="1"
-                            max={credit.amount}
-                            defaultValue={credit.amount}
+                            min="0.01"
+                            max={credit.amount - credit.filled}
+                            step="0.01"
+                            value={buyAmounts[credit.orderId] || ''}
+                            onChange={(e) => setBuyAmounts(prev => ({ ...prev, [credit.orderId]: e.target.value }))}
                             className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                           />
                           <span className="text-gray-400 text-sm">tonnes</span>
                         </div>
                         <Button
-                          onClick={() => handleBuyCredit(credit.orderId, credit.amount, credit.pricePerTonne)}
+                          onClick={() => handleBuyCredit(credit.orderId, credit.amount - credit.filled, credit.pricePerTonne)}
                           className="w-full"
                         >
                           Buy Now
@@ -315,7 +422,7 @@ export default function CreditRequests() {
                       </div>
 
                       <p className="text-xs text-gray-500 text-center">
-                        Total Cost: ${(credit.amount * credit.pricePerTonne).toFixed(2)}
+                        Total Cost: ${((parseFloat(buyAmounts[credit.orderId]) || 0) * credit.pricePerTonne).toFixed(2)}
                       </p>
                     </div>
                   </Card>

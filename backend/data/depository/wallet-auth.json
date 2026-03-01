@@ -1,3 +1,12 @@
 {
-  "wallets": {}
+  "wallets": {
+    "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc": {
+      "passwordHash": "cefcd508a1204b845df80cf43c1aa7e0850a7464d5a405152c120a6365965e56",
+      "createdAt": 1772037936531
+    },
+    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8": {
+      "passwordHash": "b7c3f16c47655586fc995227bf494b82b7cc69c76c21d6ae503c480c76286ae6",
+      "createdAt": 1772038355399
+    }
+  }
 }

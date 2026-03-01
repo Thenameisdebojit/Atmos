@@ -50,27 +50,21 @@ export default function CompanyDashboard() {
 
     const fetchData = async () => {
       try {
-        let companyDataRaw: any = null;
-        let userCredits: any[] = [];
-
-        try {
-          companyDataRaw = await getCompanyData(address);
-        } catch (error) {
-          console.error('Error fetching on-chain company data:', error);
-        }
-
-        try {
-          userCredits = await getUserCredits(address);
-        } catch (error) {
-          console.error('Error fetching user credits:', error);
-        }
-
-        let profileData: CompanyProfile | null = null;
-        try {
-          profileData = await fetchCompanyProfile(address);
-        } catch (error) {
-          console.error('Error fetching company profile:', error);
-        }
+        // Fetch all data in parallel instead of sequentially
+        const [companyDataRaw, userCredits, profileData] = await Promise.all([
+          getCompanyData(address).catch((error) => {
+            console.error('Error fetching on-chain company data:', error);
+            return null;
+          }),
+          getUserCredits(address).catch((error) => {
+            console.error('Error fetching user credits:', error);
+            return [];
+          }),
+          fetchCompanyProfile(address).catch((error) => {
+            console.error('Error fetching company profile:', error);
+            return null;
+          }),
+        ]);
 
         // Transform tuple to CompanyData object if returned from contract
         let companyData: CompanyData | null = null;
@@ -128,7 +122,7 @@ export default function CompanyDashboard() {
     };
 
     fetchData();
-  }, [isConnected, address]);
+  }, [isConnected, address, getCompanyData, getUserCredits]);
 
   if (!isConnected) {
     return (

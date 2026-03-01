@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   TrendingUp,
   TrendingDown,
@@ -23,6 +23,7 @@ import { Header } from '@/components/Header';
 import { formatCurrency, formatCarbonTonnes, formatRelativeTime } from '@/utils/format';
 import { useContractInteraction } from '@/hooks/useContractInteraction';
 import { useRealtimeEvents } from '@/hooks/useRealtimeEvents';
+import { fetchDepositoryCredits, type DepositoryCredit } from '@/utils/api';
 import {
   LineChart,
   Line,
@@ -198,15 +199,17 @@ export default function PortfolioPage() {
     address,
   } = useContractInteraction();
 
+  const handleTradeEvent = useCallback((event: any) => {
+    // Handle trade event
+  }, []);
+
+  const handleCreditEvent = useCallback((event: any) => {
+    // Handle credit event
+  }, []);
+
   const { startListening, stopListening } = useRealtimeEvents(
-    (event) => {
-      console.log('Trade event:', event);
-      // Update portfolio on trade
-    },
-    (event) => {
-      console.log('Credit event:', event);
-      // Update assets on mint/retire
-    }
+    handleTradeEvent,
+    handleCreditEvent
   );
 
   const [showHiddenValues, setShowHiddenValues] = useState(false);
@@ -217,65 +220,98 @@ export default function PortfolioPage() {
   const [userAssets, setUserAssets] = useState<AssetHolding[]>([]);
   const [carbonPrice, setCarbonPrice] = useState(0);
 
+  const mapDepositoryToAssets = (credits: DepositoryCredit[], marketPrice: number): AssetHolding[] => {
+    return credits
+      .filter((credit) => credit.status === 'Active')
+      .map((credit) => ({
+        id: credit.creditId,
+        projectName: credit.projectId || 'Carbon Project',
+        quantity: Number(credit.co2Amount || 0),
+        averagePrice: marketPrice,
+        currentPrice: marketPrice,
+        totalValue: Number(credit.co2Amount || 0) * marketPrice,
+        methodology: credit.methodology || 'VERRA_VCS',
+        unrealizedGain: 0,
+      }));
+  };
+
   // Fetch user data on mount or when wallet connects
   useEffect(() => {
     const fetchPortfolioData = async () => {
       if (!isConnected || !address) {
+        setUserAssets([]);
         setIsLoading(false);
         return;
       }
 
       try {
         setIsLoading(true);
-        
-        // Get user's carbon credits
-        const credits = await getUserCredits(address);
-        
-        // Get current carbon price
-        const price = await getCarbonPrice();
-        if (price) {
-          setCarbonPrice(price);
-        }
 
-        // Transform credits to asset holdings
-        const assets: AssetHolding[] = credits.map((credit, index) => ({
-          id: credit.id.toString(),
-          projectName: credit.projectName,
-          quantity: credit.co2Tonnes,
-          averagePrice: credit.price,
-          currentPrice: price || credit.price,
-          totalValue: credit.co2Tonnes * (price || credit.price),
-          methodology: credit.methodology,
-          unrealizedGain: credit.co2Tonnes * ((price || credit.price) - credit.price),
-        }));
+        const [credits, depositoryRes, price] = await Promise.all([
+          getUserCredits(address).catch((error) => {
+            console.error('Error fetching user credits:', error);
+            return [];
+          }),
+          fetchDepositoryCredits(address, false).catch(() => null),
+          getCarbonPrice().catch(() => 25),
+        ]);
 
-        setUserAssets(assets);
+        const resolvedPrice = price || 25;
+        setCarbonPrice(resolvedPrice);
+
+        // Map on-chain credits
+        const onChainAssets: AssetHolding[] = (credits || [])
+          .filter((credit) => !credit?.isRetired)
+          .map((credit: any) => ({
+            id: credit?.id?.toString() || Math.random().toString(),
+            projectName: credit?.projectName || 'Carbon Project',
+            quantity: Number(credit?.co2Tonnes || 0),
+            averagePrice: Number(credit?.price || resolvedPrice),
+            currentPrice: resolvedPrice,
+            totalValue: Number(credit?.co2Tonnes || 0) * resolvedPrice,
+            methodology: credit?.methodology || 'VERRA_VCS',
+            unrealizedGain: Number(credit?.co2Tonnes || 0) * (resolvedPrice - Number(credit?.price || resolvedPrice)),
+          }));
+
+        // If no on-chain credits, try depository
+        const fallbackDepositoryAssets = mapDepositoryToAssets(depositoryRes?.credits || [], resolvedPrice);
+        const finalAssets = onChainAssets.length > 0 ? onChainAssets : fallbackDepositoryAssets;
         
-        // Start listening to real-time events
-        startListening();
+        setUserAssets(finalAssets);
       } catch (error) {
         console.error('Error fetching portfolio:', error);
+        setUserAssets([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPortfolioData();
+  }, [isConnected, address]);
+
+  useEffect(() => {
+    if (!isConnected || !address) {
+      stopListening();
+      return;
+    }
+
+    stopListening();
+    startListening();
 
     return () => {
       stopListening();
     };
-  }, [isConnected, address, getUserCredits, getCarbonPrice, startListening, stopListening]);
+  }, [isConnected, address, startListening, stopListening]);
 
-  // Use user assets if available, otherwise use mock data
-  const assets = userAssets.length > 0 ? userAssets : mockAssets;
+  // Show mock data only for disconnected demo mode. Connected wallets should show real/fallback wallet data.
+  const assets = isConnected ? userAssets : mockAssets;
   const totalAssets = assets.reduce((sum, asset) => sum + asset.totalValue, 0);
   const totalInvested = mockInvestments.reduce(
     (sum, inv) => sum + inv.amountInvested,
     0
   );
   const totalRetired = 1500; // Mock value
-  const totalUnrealizedGain = mockAssets.reduce(
+  const totalUnrealizedGain = assets.reduce(
     (sum, asset) => sum + asset.unrealizedGain,
     0
   );
@@ -287,7 +323,7 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
-      <Header walletAddress={address} />
+      <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
@@ -466,59 +502,67 @@ export default function PortfolioPage() {
         {/* Assets Tab */}
         {activeTab === 'assets' && (
           <div className="space-y-6">
-            {mockAssets.map((asset) => (
-              <Card key={asset.id} className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold">{asset.projectName}</h3>
-                    <Badge variant="default" size="sm" className="mt-2">
-                      {asset.methodology}
-                    </Badge>
+            {assets.length > 0 ? (
+              assets.map((asset) => (
+                <Card key={asset.id} className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">{asset.projectName}</h3>
+                      <Badge variant="default" size="sm" className="mt-2">
+                        {asset.methodology}
+                      </Badge>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-dark-400 text-sm">Total Value</p>
+                      <p className="text-2xl font-bold gradient-text">
+                        {formatCurrency(asset.totalValue)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-dark-400 text-sm">Total Value</p>
-                    <p className="text-2xl font-bold gradient-text">
-                      {formatCurrency(asset.totalValue)}
-                    </p>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div className="bg-dark-800 p-3 rounded">
-                    <p className="text-dark-400 text-xs">Quantity</p>
-                    <p className="font-semibold">
-                      {formatCarbonTonnes(asset.quantity)}
-                    </p>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="bg-dark-800 p-3 rounded">
+                      <p className="text-dark-400 text-xs">Quantity</p>
+                      <p className="font-semibold">
+                        {formatCarbonTonnes(asset.quantity)}
+                      </p>
+                    </div>
+                    <div className="bg-dark-800 p-3 rounded">
+                      <p className="text-dark-400 text-xs">Avg Price</p>
+                      <p className="font-semibold">
+                        {formatCurrency(asset.averagePrice)}
+                      </p>
+                    </div>
+                    <div className="bg-dark-800 p-3 rounded">
+                      <p className="text-dark-400 text-xs">Current Price</p>
+                      <p className="font-semibold text-primary-400">
+                        {formatCurrency(asset.currentPrice)}
+                      </p>
+                    </div>
+                    <div className="bg-dark-800 p-3 rounded">
+                      <p className="text-dark-400 text-xs">Unrealized Gain</p>
+                      <p className="font-semibold text-green-400">
+                        {formatCurrency(asset.unrealizedGain)}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" icon={<Send className="w-4 h-4" />}>
+                        Sell
+                      </Button>
+                      <Button size="sm" variant="outline" icon={<Flame className="w-4 h-4" />}>
+                        Retire
+                      </Button>
+                    </div>
                   </div>
-                  <div className="bg-dark-800 p-3 rounded">
-                    <p className="text-dark-400 text-xs">Avg Price</p>
-                    <p className="font-semibold">
-                      {formatCurrency(asset.averagePrice)}
-                    </p>
-                  </div>
-                  <div className="bg-dark-800 p-3 rounded">
-                    <p className="text-dark-400 text-xs">Current Price</p>
-                    <p className="font-semibold text-primary-400">
-                      {formatCurrency(asset.currentPrice)}
-                    </p>
-                  </div>
-                  <div className="bg-dark-800 p-3 rounded">
-                    <p className="text-dark-400 text-xs">Unrealized Gain</p>
-                    <p className="font-semibold text-green-400">
-                      {formatCurrency(asset.unrealizedGain)}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" icon={<Send className="w-4 h-4" />}>
-                      Sell
-                    </Button>
-                    <Button size="sm" variant="outline" icon={<Flame className="w-4 h-4" />}>
-                      Retire
-                    </Button>
-                  </div>
-                </div>
+                </Card>
+              ))
+            ) : (
+              <Card className="p-12 text-center">
+                <p className="text-dark-400">
+                  {isConnected ? 'No carbon credits in your wallet yet.' : 'Connect your wallet to view your carbon credits.'}
+                </p>
               </Card>
-            ))}
+            )}
           </div>
         )}
 

@@ -88,7 +88,7 @@ export default function DashboardPage() {
         }
         
         // Fetch marketplace orders
-        const orders = await getMarketplaceOrders('active');
+        const orders = await getMarketplaceOrders();
         setActiveOrders(orders.length);
         
         // Calculate total volume
@@ -112,25 +112,12 @@ export default function DashboardPage() {
     }
   }, [isConnected, getCarbonPrice, getMarketplaceOrders, blockNumber]);
 
-  const handleConnect = () => {
-    // Implement wallet connection logic
-    console.log('Connect wallet');
-  };
-
-  const handleDisconnect = () => {
-    console.log('Disconnect wallet');
-  };
-
   const currentPrice = carbonPrice || 18.5;
-  const priceChange = ((currentPrice - 15) / 15) * 100;;
+  const priceChange = ((currentPrice - 15) / 15) * 100;
 
   return (
     <div className="min-h-screen bg-dark-950">
-      <Header
-        walletAddress={address}
-        onConnect={handleConnect}
-        onDisconnect={handleDisconnect}
-      />
+      <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}

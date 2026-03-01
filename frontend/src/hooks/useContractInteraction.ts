@@ -18,17 +18,19 @@ export const useContractInteraction = () => {
     return !/^0x0{40}$/.test(value);
   };
 
-  const ensureContractAddress = (label: string, value: string) => {
+  const ensureContractAddress = (label: string, value: string): boolean => {
     if (!isValidAddress(value)) {
-      throw new Error(`${label} address is not configured. Update your .env.local and restart the dev server.`);
+      console.error(`${label} address is not configured. Update your .env.local and restart the dev server.`);
+      return false;
     }
+    return true;
   };
 
   const getErc20Balance = useCallback(
     async (tokenAddress: string, userAddress: string) => {
       if (!publicClient) return 0;
+      if (!ensureContractAddress('ERC20 token', tokenAddress)) return 0;
       try {
-        ensureContractAddress('ERC20 token', tokenAddress);
         const balance = await publicClient.readContract({
           address: tokenAddress as `0x${string}`,
           abi: parseAbi(['function balanceOf(address owner) view returns (uint256)']),
@@ -47,8 +49,8 @@ export const useContractInteraction = () => {
   const getErc20Allowance = useCallback(
     async (tokenAddress: string, owner: string, spender: string) => {
       if (!publicClient) return 0;
+      if (!ensureContractAddress('ERC20 token', tokenAddress)) return 0;
       try {
-        ensureContractAddress('ERC20 token', tokenAddress);
         const allowance = await publicClient.readContract({
           address: tokenAddress as `0x${string}`,
           abi: parseAbi(['function allowance(address owner, address spender) view returns (uint256)']),
@@ -67,8 +69,8 @@ export const useContractInteraction = () => {
   const approveErc20 = useCallback(
     async (tokenAddress: string, spender: string, amount: number, waitForConfirmation = true) => {
       if (!walletClient || !address) return null;
+      if (!ensureContractAddress('ERC20 token', tokenAddress)) return null;
       try {
-        ensureContractAddress('ERC20 token', tokenAddress);
         const hash = await walletClient.writeContract({
           address: tokenAddress as `0x${string}`,
           abi: parseAbi(['function approve(address spender, uint256 amount) public returns (bool)']),
@@ -91,8 +93,8 @@ export const useContractInteraction = () => {
   const approveNftForAll = useCallback(
     async (nftAddress: string, operator: string, approved: boolean) => {
       if (!walletClient || !address) return null;
+      if (!ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', nftAddress)) return null;
       try {
-        ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', nftAddress);
         const hash = await walletClient.writeContract({
           address: nftAddress as `0x${string}`,
           abi: parseAbi(['function setApprovalForAll(address operator, bool approved) public']),
@@ -112,8 +114,8 @@ export const useContractInteraction = () => {
   const wrapCredit = useCallback(
     async (tokenId: number) => {
       if (!walletClient || !address) return null;
+      if (!ensureContractAddress('Carbon Credit Token (NEXT_PUBLIC_CARBON_CREDIT_TOKEN)', CONTRACTS.carbonCreditToken)) return null;
       try {
-        ensureContractAddress('Carbon Credit Token (NEXT_PUBLIC_CARBON_CREDIT_TOKEN)', CONTRACTS.carbonCreditToken);
         const hash = await walletClient.writeContract({
           address: CONTRACTS.carbonCreditToken as `0x${string}`,
           abi: parseAbi(['function wrapCredit(uint256 tokenId) public returns (uint256)']),
@@ -134,8 +136,8 @@ export const useContractInteraction = () => {
   const getCreditMetadata = useCallback(
     async (tokenId: bigint) => {
       if (!publicClient) return null;
+      if (!ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', CONTRACTS.carbonCreditNFT)) return null;
       try {
-        ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', CONTRACTS.carbonCreditNFT);
         const result = await publicClient.readContract({
           address: CONTRACTS.carbonCreditNFT as `0x${string}`,
           abi: parseAbi([
@@ -157,8 +159,8 @@ export const useContractInteraction = () => {
   const getUserCredits = useCallback(
     async (userAddress: string) => {
       if (!publicClient) return [];
+      if (!ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', CONTRACTS.carbonCreditNFT)) return [];
       try {
-        ensureContractAddress('Carbon Credit NFT (NEXT_PUBLIC_CARBON_CREDIT_NFT)', CONTRACTS.carbonCreditNFT);
         const balance = await publicClient.readContract({
           address: CONTRACTS.carbonCreditNFT as `0x${string}`,
           abi: parseAbi(['function balanceOf(address owner) view returns (uint256)']),
@@ -167,32 +169,36 @@ export const useContractInteraction = () => {
         });
         
         const credits: CarbonCredit[] = [];
-        for (let i = 0; i < Number(balance); i++) {
-          const tokenId = await publicClient.readContract({
-            address: CONTRACTS.carbonCreditNFT as `0x${string}`,
-            abi: parseAbi(['function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)']),
-            functionName: 'tokenOfOwnerByIndex',
-            args: [userAddress as `0x${string}`, BigInt(i)],
-          });
-          
-          const details: any = await getCreditMetadata(tokenId as bigint);
-          if (details) {
-            // details is [projectId, projectName, methodology, co2Tonnes, vintageYear, geography, oracleProofHash, satelliteDataCID, verificationSource, verificationDate, isRetired, issuanceDate, serialNumber]
+        const tokenCount = Number(balance);
+        for (let i = 0; i < tokenCount; i++) {
+          try {
+            const tokenId = await publicClient.readContract({
+              address: CONTRACTS.carbonCreditNFT as `0x${string}`,
+              abi: parseAbi(['function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)']),
+              functionName: 'tokenOfOwnerByIndex',
+              args: [userAddress as `0x${string}`, BigInt(i)],
+            });
+
+            const details: any = await getCreditMetadata(tokenId as bigint);
+            if (!details) continue;
+
             credits.push({
               id: Number(tokenId).toString(),
               tokenId: Number(tokenId),
               projectId: details[0] || `proj-${Number(tokenId)}`,
               projectName: details[1] || `Project ${Number(tokenId)}`,
-              methodology: (details[2] || 'VERRA_VCS') as const,
+              methodology: (details[2] || 'VERRA_VCS') as CarbonCredit['methodology'],
               co2Tonnes: Number(details[3]) / 1e18,
               vintageYear: Number(details[4]),
               geography: details[5] || 'Unknown',
               verificationDate: Number(details[9]),
-              isRetired: details[10],
+              isRetired: Boolean(details[10]),
               issuanceDate: Number(details[11]),
               serialNumber: details[12] || `SN-${Number(tokenId)}`,
-              price: Math.random() * 50 + 10,
+              price: 25,
             });
+          } catch (tokenError) {
+            console.error('Error fetching user credit at index:', i, tokenError);
           }
         }
         return credits;
@@ -701,8 +707,8 @@ export const useContractInteraction = () => {
   const getCompanyData = useCallback(
     async (companyAddress: string) => {
       if (!publicClient) return null;
+      if (!ensureContractAddress('Emission Verifier (NEXT_PUBLIC_EMISSION_VERIFIER)', CONTRACTS.emissionVerifier)) return null;
       try {
-        ensureContractAddress('Emission Verifier (NEXT_PUBLIC_EMISSION_VERIFIER)', CONTRACTS.emissionVerifier);
         const result = await publicClient.readContract({
           address: CONTRACTS.emissionVerifier as `0x${string}`,
           abi: parseAbi([
@@ -911,8 +917,8 @@ export const useContractInteraction = () => {
   const getTraderData = useCallback(
     async (traderAddress: string) => {
       if (!publicClient) return null;
+      if (!ensureContractAddress('Emission Verifier (NEXT_PUBLIC_EMISSION_VERIFIER)', CONTRACTS.emissionVerifier)) return null;
       try {
-        ensureContractAddress('Emission Verifier (NEXT_PUBLIC_EMISSION_VERIFIER)', CONTRACTS.emissionVerifier);
         const result = await publicClient.readContract({
           address: CONTRACTS.emissionVerifier as `0x${string}`,
           abi: parseAbi([
@@ -990,6 +996,7 @@ export const useContractInteraction = () => {
     isConnected,
     address,
     blockNumber,
+    publicClient,
     
     // Read functions
     getCreditMetadata,

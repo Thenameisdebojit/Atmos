@@ -44,7 +44,6 @@ export default function AuctionsPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'ending-soon'>('all');
   const [selectedAuction, setSelectedAuction] = useState<AuctionItem | null>(null);
   const [bidAmount, setBidAmount] = useState('');
-  const [walletAddress, setWalletAddress] = useState<string>();
   const [auctions, setAuctions] = useState<AuctionItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { success, error: errorNotif } = useNotification();
@@ -68,7 +67,7 @@ export default function AuctionsPage() {
           highestBidder: auction.highestBidder,
           startTime: auction.startTime,
           endTime: auction.endTime,
-          status: auction.isActive ? 'active' : 'ended',
+          status: (auction.isActive ? 'active' : 'ended') as AuctionItem['status'],
         }));
         setAuctions(mapped);
       } catch (error) {
@@ -155,7 +154,7 @@ export default function AuctionsPage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
-      <Header walletAddress={walletAddress} />
+      <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
@@ -194,7 +193,7 @@ export default function AuctionsPage() {
         {/* Auction Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {isLoading ? (
-            <LoadingSkeleton className="h-40" />
+            <LoadingSkeleton height="h-40" />
           ) : filteredAuctions.length > 0 ? (
             filteredAuctions.map((auction) => {
               const now = Date.now() / 1000;

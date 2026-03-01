@@ -8,7 +8,7 @@ echo.
 
 echo Step 0: Installing dependencies...
 echo Installing root packages...
-call npm install
+call npm install --ignore-scripts
 if %ERRORLEVEL% neq 0 (
     echo ERROR: Root npm install failed
     pause
@@ -16,7 +16,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo Installing frontend packages...
-call npm install --prefix frontend
+call npm install --prefix frontend --ignore-scripts
 if %ERRORLEVEL% neq 0 (
     echo ERROR: Frontend npm install failed
     pause
@@ -24,7 +24,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo Installing backend packages...
-call npm install --prefix backend
+call npm install --prefix backend --ignore-scripts
 if %ERRORLEVEL% neq 0 (
     echo ERROR: Backend npm install failed
     pause

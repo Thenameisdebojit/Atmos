@@ -121,7 +121,7 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
     }
     setUnlocked(false);
     fetchStatus();
-  }, [isOpen, address, fetchStatus]);
+  }, [isOpen, address, fetchStatus, fetchCredits]);
 
   useEffect(() => {
     if (unlocked && address) fetchCredits();

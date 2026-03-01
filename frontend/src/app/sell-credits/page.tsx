@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { Header } from '@/components/Header';
 import { Card, Button, Input, StatCard } from '@/components/UI';
 import toast from 'react-hot-toast';
 import { useContractInteraction } from '@/hooks/useContractInteraction';
 import { CONTRACTS } from '@/config/contracts';
+import { fetchDepositoryCredits } from '@/utils/api';
+import { notifyTradeSuccess, requestNotificationPermission } from '@/utils/notifications';
 
 interface ListingForm {
   amount: string;
@@ -35,16 +37,24 @@ export default function SellCredits() {
     getErc20Balance,
     getErc20Allowance,
     approveErc20,
+    approveNftForAll,
+    wrapCredit,
     createSellOrder,
     createAuction,
+    cancelOrder,
+    cancelAuction,
+    publicClient,
   } = useContractInteraction();
 
   const [tab, setTab] = useState<'list' | 'active'>('list');
   const [userCredits, setUserCredits] = useState<any[]>([]);
   const [activeListings, setActiveListings] = useState<ActiveListing[]>([]);
   const [cctBalance, setCctBalance] = useState(0);
+  const [unwrappedEquivalent, setUnwrappedEquivalent] = useState(0);
+  const [usdcBalance, setUsdcBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [wrappingTokenId, setWrappingTokenId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ListingForm>({
     amount: '',
@@ -54,57 +64,112 @@ export default function SellCredits() {
     auctionStartPrice: '',
   });
 
-  useEffect(() => {
+  const refreshSellData = useCallback(async () => {
     if (!isConnected || !address) {
+      setLoading(false);
       return;
     }
 
-    const fetchCredits = async () => {
-      try {
-        const credits = await getUserCredits(address);
-        setUserCredits(credits || []);
+    try {
+      const [credits, depositoryRes] = await Promise.all([
+        getUserCredits(address),
+        fetchDepositoryCredits(address, false).catch(() => null),
+      ]);
+      setUserCredits(credits || []);
 
-        const balance = await getErc20Balance(CONTRACTS.carbonCreditToken, address);
-        setCctBalance(balance || 0);
+      const nftCreditTonnes = (credits || [])
+        .filter((credit: any) => !credit?.isRetired)
+        .reduce((sum: number, credit: any) => sum + Number(credit?.co2Tonnes || 0), 0);
+      const depositoryTonnes = (depositoryRes?.credits || [])
+        .filter((credit: any) => credit?.status === 'Active')
+        .reduce((sum: number, credit: any) => sum + Number(credit?.co2Amount || 0), 0);
+      const walletCreditEquivalent = nftCreditTonnes > 0 ? nftCreditTonnes : depositoryTonnes;
 
-        const orders = await getMarketplaceOrders();
-        const auctions = await getActiveAuctions();
+      const balance = await getErc20Balance(CONTRACTS.carbonCreditToken, address);
+      const realCctBalance = Number(balance || 0);
+      setCctBalance(realCctBalance);
+      setUnwrappedEquivalent(walletCreditEquivalent);
 
-        const activeOrders = (orders || [])
-          .filter((order) => !order.isBuyOrder && order.trader.toLowerCase() === address.toLowerCase())
-          .map((order) => ({
-            id: order.orderId.toString(),
-            amount: order.amount,
-            pricePerTonne: order.pricePerTonne,
-            saleType: 'fixed-price' as const,
-            listedAt: order.createdAt * 1000,
-            status: order.isActive ? 'active' : 'pending',
-            totalValue: order.amount * order.pricePerTonne,
-          }));
+      const usdc = await getErc20Balance(CONTRACTS.usdc, address);
+      setUsdcBalance(Number(usdc || 0));
 
-        const activeAuctionListings = (auctions || [])
-          .filter((auction) => auction.seller.toLowerCase() === address.toLowerCase())
-          .map((auction) => ({
-            id: auction.auctionId.toString(),
-            amount: auction.amount,
-            pricePerTonne: auction.startPrice,
-            saleType: 'auction' as const,
-            listedAt: auction.startTime * 1000,
-            status: auction.isActive ? 'active' : 'pending',
-            totalValue: auction.amount * auction.startPrice,
-          }));
+      const orders = await getMarketplaceOrders();
+      const auctions = await getActiveAuctions();
 
-        setActiveListings([...activeOrders, ...activeAuctionListings]);
+      const activeOrders = (orders || [])
+        .filter((order) => !order.isBuyOrder && order.trader.toLowerCase() === address.toLowerCase())
+        .map((order) => ({
+          id: order.orderId.toString(),
+          amount: Math.max(order.amount - order.filled, 0),
+          pricePerTonne: order.pricePerTonne,
+          saleType: 'fixed-price' as const,
+          listedAt: order.createdAt * 1000,
+          status: (order.isActive ? 'active' : (order.filled >= order.amount ? 'sold' : 'pending')) as ActiveListing['status'],
+          totalValue: Math.max(order.amount - order.filled, 0) * order.pricePerTonne,
+        }));
 
-        setLoading(false);
-      } catch (error) {
-        console.error('Error:', error);
-        setLoading(false);
+      const activeAuctionListings = (auctions || [])
+        .filter((auction) => auction.seller.toLowerCase() === address.toLowerCase())
+        .map((auction) => ({
+          id: auction.auctionId.toString(),
+          amount: auction.amount,
+          pricePerTonne: auction.startPrice,
+          saleType: 'auction' as const,
+          listedAt: auction.startTime * 1000,
+          status: (auction.isActive ? 'active' : 'pending') as ActiveListing['status'],
+          totalValue: auction.amount * auction.startPrice,
+        }));
+
+      setActiveListings([...activeOrders, ...activeAuctionListings]);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    isConnected,
+    address,
+    getUserCredits,
+    getMarketplaceOrders,
+    getActiveAuctions,
+    getErc20Balance,
+  ]);
+
+  useEffect(() => {
+    requestNotificationPermission();
+    setLoading(true);
+    refreshSellData();
+  }, [refreshSellData]);
+
+  const handleWrapCredit = async (tokenId: number) => {
+    if (!address) return;
+
+    setWrappingTokenId(tokenId);
+    const loadingToast = toast.loading(`Wrapping credit #${tokenId}...`);
+
+    try {
+      const approvalTx = await approveNftForAll(CONTRACTS.carbonCreditNFT, CONTRACTS.carbonCreditToken, true);
+      if (!approvalTx) throw new Error('NFT approval failed');
+      if (publicClient) {
+        await publicClient.waitForTransactionReceipt({ hash: approvalTx });
       }
-    };
 
-    fetchCredits();
-  }, [isConnected, address]);
+      const wrapTx = await wrapCredit(tokenId);
+      if (!wrapTx) throw new Error('Wrap transaction failed');
+      if (publicClient) {
+        await publicClient.waitForTransactionReceipt({ hash: wrapTx });
+      }
+
+      toast.dismiss(loadingToast);
+      toast.success(`Credit #${tokenId} wrapped to CCT`);
+      await refreshSellData();
+    } catch (error: any) {
+      toast.dismiss(loadingToast);
+      toast.error(error?.message || 'Failed to wrap credit');
+    } finally {
+      setWrappingTokenId(null);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -135,17 +200,23 @@ export default function SellCredits() {
       const amount = parseFloat(formData.amount);
       const pricePerTonne = parseFloat(formData.pricePerTonne);
 
+      if (amount > cctBalance) {
+        throw new Error(`Insufficient CCT balance. You can list up to ${cctBalance.toFixed(2)} tonnes.`);
+      }
+
       const allowance = await getErc20Allowance(
         CONTRACTS.carbonCreditToken,
-        address,
+        address as string,
         CONTRACTS.carbonMarketplace
       );
 
       if (allowance < amount) {
         const approveTx = await approveErc20(CONTRACTS.carbonCreditToken, CONTRACTS.carbonMarketplace, amount);
         if (!approveTx) {
-          toast.error('CCT approval failed');
-          throw new Error('Approval failed');
+          throw new Error('CCT approval was cancelled or failed');
+        }
+        if (publicClient) {
+          await publicClient.waitForTransactionReceipt({ hash: approveTx });
         }
         toast.success('CCT approved! Creating listing...');
       }
@@ -158,20 +229,21 @@ export default function SellCredits() {
         txHash = await createAuction(amount, startPrice, endTime);
       }
 
+      if (!txHash) {
+        throw new Error('Listing transaction was cancelled or failed');
+      }
+      if (publicClient) {
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        if (receipt.status !== 'success') {
+          throw new Error('Listing transaction reverted');
+        }
+      }
+
       toast.dismiss(loadingToast);
       toast.success('Listing created successfully!');
+      notifyTradeSuccess('sell', amount, pricePerTonne, txHash);
 
-      // Add to active listings
-      const newListing: ActiveListing = {
-        id: Date.now().toString(),
-        amount,
-        pricePerTonne,
-        saleType: formData.saleType,
-        listedAt: Date.now(),
-        status: 'active',
-        totalValue: amount * pricePerTonne,
-      };
-      setActiveListings([...activeListings, newListing]);
+      await refreshSellData();
 
       // Reset form
       setFormData({
@@ -186,30 +258,71 @@ export default function SellCredits() {
     } catch (error: any) {
       toast.dismiss(loadingToast);
       console.error('Error:', error);
-      toast.error(error?.message || 'Failed to create listing');
+      const errorMessage = error?.shortMessage || error?.message || 'Failed to create listing';
+      const normalized = String(errorMessage).toLowerCase();
+      if (
+        normalized.includes('user rejected') ||
+        normalized.includes('rejected') ||
+        normalized.includes('cancelled') ||
+        normalized.includes('denied')
+      ) {
+        toast.error('Transaction cancelled in wallet');
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCancelListing = (listingId: string) => {
-    toast.promise(
-      new Promise(resolve => setTimeout(() => {
-        setActiveListings(activeListings.filter(l => l.id !== listingId));
-        resolve(null);
-      }, 1500)),
-      {
-        loading: 'Canceling listing...',
-        success: 'Listing canceled',
-        error: 'Failed to cancel',
+  const handleCancelListing = async (listingId: string, saleType: 'fixed-price' | 'auction') => {
+    const loadingToast = toast.loading('Canceling listing...');
+    try {
+      const parsedId = Number(listingId);
+      if (!Number.isFinite(parsedId)) {
+        throw new Error('Invalid listing id');
       }
-    );
+
+      const txHash = saleType === 'fixed-price'
+        ? await cancelOrder(parsedId)
+        : await cancelAuction(parsedId);
+
+      if (!txHash) {
+        throw new Error('Cancellation transaction was cancelled or failed');
+      }
+
+      if (publicClient) {
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        if (receipt.status !== 'success') {
+          throw new Error('Cancellation transaction reverted');
+        }
+      }
+
+      toast.dismiss(loadingToast);
+      toast.success('Listing canceled');
+      await refreshSellData();
+    } catch (error: any) {
+      toast.dismiss(loadingToast);
+      const errorMessage = error?.shortMessage || error?.message || 'Failed to cancel listing';
+      const normalized = String(errorMessage).toLowerCase();
+      if (
+        normalized.includes('user rejected') ||
+        normalized.includes('rejected') ||
+        normalized.includes('cancelled') ||
+        normalized.includes('denied')
+      ) {
+        toast.error('Transaction cancelled in wallet');
+      } else {
+        toast.error(errorMessage);
+      }
+    }
   };
 
   // Calculate stats
   const totalValue = activeListings.reduce((sum, l) => sum + l.totalValue, 0);
   const activeSales = activeListings.filter(l => l.saleType === 'fixed-price').length;
   const activeAuctions = activeListings.filter(l => l.saleType === 'auction').length;
+  const wrappableCredits = userCredits.filter((credit: any) => !credit?.isRetired);
 
   if (!isConnected) {
     return (
@@ -269,12 +382,18 @@ export default function SellCredits() {
           <StatCard
             label="CCT Balance"
             value={cctBalance.toFixed(2)}
-            subtext="tonnes"
+            subtext="on-chain tonnes"
             change={2}
           />
           <StatCard
+            label="Need Wrapping"
+            value={Math.max(unwrappedEquivalent - cctBalance, 0).toFixed(2)}
+            subtext="wallet tonnes"
+            change={4}
+          />
+          <StatCard
             label="Active Listings"
-            value={activeListings.length.toString()}
+            value={activeListings.filter((listing) => listing.status === 'active').length.toString()}
             subtext="listings"
             change={8}
           />
@@ -286,15 +405,23 @@ export default function SellCredits() {
           />
           <StatCard
             label="Avg Price"
-            value={activeListings.length > 0 ? `$${(totalValue / activeListings.reduce((sum, l) => sum + l.amount, 0)).toFixed(2)}` : '$0'}
+            value={activeListings.length > 0 && activeListings.reduce((sum, l) => sum + l.amount, 0) > 0
+              ? `$${(totalValue / activeListings.reduce((sum, l) => sum + l.amount, 0)).toFixed(2)}`
+              : '$0'}
             subtext="per tonne"
             change={3}
+          />
+          <StatCard
+            label="USDC Balance"
+            value={`$${usdcBalance.toFixed(2)}`}
+            subtext="seller proceeds"
+            change={usdcBalance > 0 ? 10 : 0}
           />
         </div>
 
         {/* Tabs */}
         <div className="flex gap-4 mb-8 border-b border-slate-700">
-          {['list', 'active'].map(t => (
+          {(['list', 'active'] as const).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -393,7 +520,33 @@ export default function SellCredits() {
               </form>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-400 mb-4">You have no CCT balance to sell</p>
+                <p className="text-gray-400 mb-2">You have no wrapped on-chain CCT available to sell yet</p>
+                <p className="text-gray-500 text-sm">Your Carbon Wallet credits are visible, but selling requires wrapped CCT.</p>
+                {wrappableCredits.length > 0 && (
+                  <div className="mt-6 space-y-3 text-left max-w-xl mx-auto">
+                    <p className="text-gray-300 text-sm">Wrap one of your active NFT credits to unlock selling:</p>
+                    {wrappableCredits.slice(0, 5).map((credit: any) => (
+                      <div
+                        key={credit.tokenId}
+                        className="flex items-center justify-between p-3 bg-slate-800/60 border border-slate-700 rounded-lg"
+                      >
+                        <div>
+                          <p className="text-white text-sm font-medium">Token #{credit.tokenId}</p>
+                          <p className="text-gray-400 text-xs">
+                            {Number(credit.co2Tonnes || 0).toFixed(2)} tCO₂ • {credit.methodology}
+                          </p>
+                        </div>
+                        <Button
+                          onClick={() => handleWrapCredit(credit.tokenId)}
+                          disabled={wrappingTokenId !== null}
+                          className="px-4 py-2"
+                        >
+                          {wrappingTokenId === credit.tokenId ? 'Wrapping...' : 'Wrap to CCT'}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </Card>
@@ -440,9 +593,10 @@ export default function SellCredits() {
                     </div>
 
                     <Button
-                      onClick={() => handleCancelListing(listing.id)}
+                      onClick={() => handleCancelListing(listing.id, listing.saleType)}
                       variant="secondary"
                       size="sm"
+                      disabled={listing.status !== 'active'}
                     >
                       Cancel
                     </Button>

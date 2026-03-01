@@ -7,6 +7,8 @@ import { Card, StatCard, Button } from '@/components/UI';
 import { useContractInteraction } from '@/hooks/useContractInteraction';
 import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
+import { CONTRACTS } from '@/config/contracts';
+import { fetchDepositoryCredits } from '@/utils/api';
 
 interface TraderData {
   name: string;
@@ -40,6 +42,17 @@ const mockPortfolioHistory = [
   { month: 'Feb', value: 1800 },
 ];
 
+const mockTradingSeries = [
+  { time: '09:00', price: 24.1, volume: 120 },
+  { time: '10:00', price: 24.6, volume: 160 },
+  { time: '11:00', price: 24.4, volume: 140 },
+  { time: '12:00', price: 24.9, volume: 220 },
+  { time: '13:00', price: 25.3, volume: 250 },
+  { time: '14:00', price: 25.0, volume: 210 },
+  { time: '15:00', price: 25.6, volume: 280 },
+  { time: '16:00', price: 25.8, volume: 300 },
+];
+
 const mockAssetAllocation = [
   { name: 'Solar Projects', value: 40, color: '#f59e0b' },
   { name: 'Wind Energy', value: 30, color: '#3b82f6' },
@@ -49,10 +62,11 @@ const mockAssetAllocation = [
 
 export default function TraderDashboard() {
   const { address, isConnected } = useAccount();
-  const { getTraderData, getUserCredits } = useContractInteraction();
+  const { getTraderData, getUserCredits, getErc20Balance } = useContractInteraction();
 
   const [trader, setTrader] = useState<TraderData | null>(null);
   const [credits, setCredits] = useState<any[]>([]);
+  const [cctBalance, setCctBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -63,8 +77,20 @@ export default function TraderDashboard() {
 
     const fetchData = async () => {
       try {
-        const traderData = await getTraderData(address);
-        const userCredits = await getUserCredits(address);
+        const [traderData, userCredits, currentCctBalance, depositoryRes] = await Promise.all([
+          getTraderData(address),
+          getUserCredits(address),
+          getErc20Balance(CONTRACTS.carbonCreditToken, address),
+          fetchDepositoryCredits(address, false).catch(() => null),
+        ]);
+
+        const activeCredits = (userCredits || []).filter((credit) => !credit?.isRetired);
+        const creditTonnes = activeCredits.reduce((sum, credit) => sum + Number(credit?.co2Tonnes || 0), 0);
+        const depositoryTonnes = (depositoryRes?.credits || [])
+          .filter((credit: any) => credit?.status === 'Active')
+          .reduce((sum: number, credit: any) => sum + Number(credit?.co2Amount || 0), 0);
+        const effectiveCreditTonnes = creditTonnes > 0 ? creditTonnes : depositoryTonnes;
+        const effectiveCctDisplay = Number(currentCctBalance || 0) > 0 ? Number(currentCctBalance || 0) : effectiveCreditTonnes;
 
         setTrader(traderData || {
           name: 'Carbon Trader',
@@ -76,10 +102,11 @@ export default function TraderDashboard() {
           totalInvested: 5000,
           currentValue: 6200,
           totalProfit: 1200,
-          creditCount: 250,
+          creditCount: effectiveCreditTonnes,
         });
 
         setCredits(userCredits || []);
+        setCctBalance(effectiveCctDisplay);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching trader data:', error);
@@ -88,7 +115,7 @@ export default function TraderDashboard() {
     };
 
     fetchData();
-  }, [isConnected, address]);
+  }, [isConnected, address, getTraderData, getUserCredits, getErc20Balance]);
 
   if (!isConnected) {
     return (
@@ -187,8 +214,8 @@ export default function TraderDashboard() {
           />
           <StatCard
             label="Carbon Credits"
-            value={trader.creditCount.toString()}
-            subtext="tonnes owned"
+            value={trader.creditCount.toFixed(2)}
+            subtext={`tonnes owned • CCT ${cctBalance.toFixed(2)}`}
             change={15}
           />
         </div>
@@ -369,10 +396,65 @@ export default function TraderDashboard() {
           </div>
         )}
 
-        {/* Trading & Analytics Tabs */}
-        {(activeTab === 'trading' || activeTab === 'analytics') && (
+        {/* Trading Tab */}
+        {activeTab === 'trading' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="p-6 lg:col-span-2">
+              <h3 className="text-lg font-semibold text-white mb-6">CCT Trading Graph</h3>
+              <ResponsiveContainer width="100%" height={320}>
+                <LineChart data={mockTradingSeries}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="time" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1e293b',
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                    }}
+                    formatter={(value: number, name: string) => [name === 'price' ? `$${value.toFixed(2)}` : value, name === 'price' ? 'Price' : 'Volume']}
+                  />
+                  <Line type="monotone" dataKey="price" stroke="#22c55e" strokeWidth={3} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Trading Summary</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Last Price</span>
+                  <span className="text-white font-semibold">${mockTradingSeries[mockTradingSeries.length - 1].price.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">24h High</span>
+                  <span className="text-white font-semibold">${Math.max(...mockTradingSeries.map(p => p.price)).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">24h Low</span>
+                  <span className="text-white font-semibold">${Math.min(...mockTradingSeries.map(p => p.price)).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Volume</span>
+                  <span className="text-white font-semibold">{mockTradingSeries.reduce((sum, p) => sum + p.volume, 0)}</span>
+                </div>
+              </div>
+              <div className="mt-6 grid grid-cols-2 gap-2">
+                <Link href="/marketplace">
+                  <Button className="w-full">Buy</Button>
+                </Link>
+                <Link href="/sell-credits">
+                  <Button className="w-full" variant="secondary">Sell</Button>
+                </Link>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
           <Card className="p-8 text-center">
-            <p className="text-gray-400">Coming soon...</p>
+            <p className="text-gray-400">Analytics panel coming soon.</p>
           </Card>
         )}
       </main>

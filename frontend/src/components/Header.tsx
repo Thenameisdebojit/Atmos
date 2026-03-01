@@ -30,8 +30,8 @@ export const Header: React.FC = () => {
     const check = async () => {
       try {
         const [companyProfile, traderData] = await Promise.all([
-          fetchCompanyProfile(address),
-          getTraderData(address),
+          fetchCompanyProfile(address).catch(() => null),
+          getTraderData(address).catch(() => null),
         ]);
         if (!cancelled) {
           setIsCompany(companyProfile != null);

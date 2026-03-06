@@ -84,12 +84,33 @@ const walletGroups = [
   },
 ];
 
-const connectors = connectorsForWallets(walletGroups);
+let resolvedConnectors: ReturnType<typeof connectorsForWallets> | any[] = [];
+try {
+  const connectors = connectorsForWallets(walletGroups);
+  resolvedConnectors = typeof connectors === 'function' ? connectors() : connectors;
+} catch (err) {
+  console.warn('[ATMOS] Wallet connector init failed (likely a conflicting browser extension). Falling back to safe defaults.', err);
+  // Fallback: only walletConnect + coinbase (no injected provider)
+  try {
+    const fallback = connectorsForWallets([
+      {
+        groupName: 'Available',
+        wallets: [
+          walletConnectWallet({ chains, projectId }),
+          coinbaseWallet({ appName, chains }),
+        ],
+      },
+    ]);
+    resolvedConnectors = typeof fallback === 'function' ? fallback() : fallback;
+  } catch {
+    // absolute fallback: empty
+  }
+}
 
-// Create wagmi config (connectors can be function or array; wagmi accepts both)
+// Create wagmi config
 export const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: typeof connectors === 'function' ? connectors() : connectors,
+  connectors: resolvedConnectors as any,
   publicClient,
 });
 

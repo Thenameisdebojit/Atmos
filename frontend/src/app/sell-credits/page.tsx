@@ -182,8 +182,13 @@ export default function SellCredits() {
   const handleSubmitListing = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.amount || !formData.pricePerTonne) {
-      toast.error('Please fill required fields');
+    if (!formData.amount) {
+      toast.error('Please enter an amount');
+      return;
+    }
+
+    if (formData.saleType === 'fixed-price' && !formData.pricePerTonne) {
+      toast.error('Please enter a price per tonne');
       return;
     }
 

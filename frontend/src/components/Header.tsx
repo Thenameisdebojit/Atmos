@@ -69,6 +69,7 @@ export const Header: React.FC = () => {
   }, []);
 
   return (
+    <>
     <header className="sticky top-0 z-40 glass border-b border-dark-700">
       {missingConfig.length > 0 && (
         <div className="bg-yellow-500/10 border-b border-yellow-500/30 text-yellow-200 text-xs px-6 py-2">
@@ -141,8 +142,9 @@ export const Header: React.FC = () => {
           </button>
         </div>
       </div>
-      <CarbonWalletModal isOpen={carbonWalletOpen} onClose={() => setCarbonWalletOpen(false)} />
     </header>
+    <CarbonWalletModal isOpen={carbonWalletOpen} onClose={() => setCarbonWalletOpen(false)} />
+    </>
   );
 };
 

@@ -7,8 +7,10 @@ import {
   Shield,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
   Loader2,
   X,
+  ArrowLeft,
   Award,
   Lock,
   Unlock,
@@ -23,7 +25,7 @@ import {
   ShoppingCart,
   Tag,
 } from 'lucide-react';
-import { Card, Badge, Button, LoadingSkeleton, EmptyState, Input } from '@/components/UI';
+import { Badge, Button, LoadingSkeleton, EmptyState, Input } from '@/components/UI';
 import { formatCarbonTonnes, formatCurrency, formatAddress } from '@/utils/format';
 import {
   fetchDepositoryCredits,
@@ -38,7 +40,6 @@ import { useAccount } from 'wagmi';
 import { useContractInteraction } from '@/hooks/useContractInteraction';
 import { CONTRACTS } from '@/config/contracts';
 import { CarbonCredit, Order } from '@/types';
-import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
 const UNLOCK_VALID_MS = 30 * 60 * 1000;
@@ -72,7 +73,7 @@ interface CarbonWalletModalProps {
   onClose: () => void;
 }
 
-type WalletTab = 'overview' | 'nfts' | 'orders' | 'depository';
+type WalletView = 'home' | 'nfts' | 'orders' | 'depository';
 
 export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
   const { address, isConnected } = useAccount();
@@ -102,12 +103,12 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
   // UI state
   const [loading, setLoading] = useState(true);
   const [balanceRefreshing, setBalanceRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<WalletTab>('overview');
+  const [view, setView] = useState<WalletView>('home');
   const [retireCreditId, setRetireCreditId] = useState<string | null>(null);
   const [retireReason, setRetireReason] = useState('');
   const [retiring, setRetiring] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   const accountNumber = address ? getCarbonAccountNumber(address) : '';
 
@@ -165,7 +166,6 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
   const fetchAll = useCallback(async () => {
     if (!address) return;
     setLoading(true);
-    setError(null);
     await Promise.all([
       fetchBalances(),
       fetchNfts(),
@@ -205,6 +205,14 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
   useEffect(() => {
     if (unlocked && address && isOpen) fetchAll();
   }, [unlocked, address, isOpen, fetchAll]);
+
+  // Reset view when opening
+  useEffect(() => {
+    if (isOpen) {
+      setView('home');
+      setClosing(false);
+    }
+  }, [isOpen]);
 
   const handleSetPassword = async () => {
     if (!address || !password || password.length < 6) {
@@ -270,9 +278,13 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
   };
 
   const handleClose = () => {
-    setPassword('');
-    setConfirmPassword('');
-    onClose();
+    setClosing(true);
+    setTimeout(() => {
+      setPassword('');
+      setConfirmPassword('');
+      setClosing(false);
+      onClose();
+    }, 200);
   };
 
   const copyAddress = () => {
@@ -293,60 +305,80 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
 
   if (!isOpen) return null;
 
-  const tabs: { id: WalletTab; label: string; count?: number }[] = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'nfts', label: 'NFT Credits', count: nftCredits.length },
-    { id: 'orders', label: 'My Orders', count: myOrders.length },
-    { id: 'depository', label: 'Depository', count: depCredits.length },
-  ];
+  const viewTitle: Record<WalletView, string> = {
+    home: 'Carbon Wallet',
+    nfts: 'NFT Credits',
+    orders: 'My Orders',
+    depository: 'Depository',
+  };
 
+  /* ═══════════════════════════════════════════════════
+     RENDER — Compact right-side slide-in panel
+     ═══════════════════════════════════════════════════ */
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={handleClose}>
+    <div
+      className={`fixed inset-0 z-50 transition-colors duration-200 ${closing ? 'bg-black/0' : 'bg-black/50'}`}
+      onClick={handleClose}
+    >
       <div
-        className="bg-dark-900 border border-dark-600 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col"
+        className={`absolute right-0 top-0 h-full w-full max-w-[380px] bg-dark-900 border-l border-dark-700 shadow-2xl flex flex-col transition-transform duration-200 ease-out ${closing ? 'translate-x-full' : 'translate-x-0'}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ─── Header ─── */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-dark-700 bg-gradient-to-r from-dark-900 to-dark-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-white" />
+        {/* ─── Panel Header ─── */}
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-dark-700 bg-dark-900/95 backdrop-blur-sm shrink-0">
+          {view !== 'home' ? (
+            <button
+              type="button"
+              onClick={() => setView('home')}
+              className="p-1.5 -ml-1 rounded-lg hover:bg-dark-700 text-dark-300 hover:text-white transition-colors"
+              aria-label="Back"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          ) : (
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shrink-0">
+              <Leaf className="w-3.5 h-3.5 text-white" />
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">Carbon Wallet</h2>
-              <p className="text-xs text-dark-400">ATMOS Depository • Real-time on-chain data</p>
-            </div>
-          </div>
+          )}
+          <h2 className="text-sm font-semibold text-white flex-1">{viewTitle[view]}</h2>
+          {unlocked && (
+            <button
+              onClick={() => fetchAll()}
+              disabled={loading || balanceRefreshing}
+              className="p-1.5 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-white transition-colors disabled:opacity-40"
+              title="Refresh"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${(loading || balanceRefreshing) ? 'animate-spin' : ''}`} />
+            </button>
+          )}
           <button
             type="button"
             onClick={handleClose}
-            className="p-2 rounded-lg hover:bg-dark-700 text-dark-300 hover:text-white transition-colors"
-            aria-label="Close"
+            className="p-1.5 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-white transition-colors"
+            aria-label="Close wallet"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* ─── Body ─── */}
+        {/* ─── Panel Body ─── */}
         <div className="flex-1 overflow-y-auto">
           {!isConnected ? (
-            <div className="py-16 text-center text-dark-400">
-              <div className="w-16 h-16 rounded-2xl bg-dark-800 flex items-center justify-center mx-auto mb-4">
-                <Wallet className="w-8 h-8 opacity-50" />
-              </div>
-              <p className="text-lg font-medium">Connect your wallet</p>
-              <p className="text-sm text-dark-500 mt-1">to open your Official Carbon Wallet</p>
+            <div className="py-14 text-center text-dark-400 px-6">
+              <Wallet className="w-10 h-10 opacity-40 mx-auto mb-3" />
+              <p className="text-sm font-medium">Connect your wallet</p>
+              <p className="text-xs text-dark-500 mt-1">to access Carbon Wallet</p>
             </div>
           ) : walletStatus === null ? (
-            <div className="p-6"><LoadingSkeleton count={3} height="h-20" /></div>
+            <div className="p-4"><LoadingSkeleton count={3} height="h-12" /></div>
           ) : !walletStatus.hasPassword ? (
-            /* ─── Set password screen ─── */
-            <div className="max-w-sm mx-auto py-10 px-6">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                <Lock className="w-7 h-7 text-emerald-400" />
+            /* ─── Set password ─── */
+            <div className="px-5 py-8">
+              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
+                <Lock className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-lg font-semibold text-white text-center mb-1">Secure your wallet</h3>
-              <p className="text-dark-400 text-sm text-center mb-6">Set a password to protect your Carbon Wallet.</p>
+              <h3 className="text-sm font-semibold text-white text-center mb-1">Secure your wallet</h3>
+              <p className="text-dark-400 text-xs text-center mb-5">Set a password to protect access.</p>
               <Input
                 label="Password (min 6 characters)"
                 type="password"
@@ -354,7 +386,7 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
               />
-              <div className="mt-3">
+              <div className="mt-2.5">
                 <Input
                   label="Confirm password"
                   type="password"
@@ -364,22 +396,22 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
                 />
               </div>
               <Button
-                className="w-full mt-5"
+                className="w-full mt-4"
                 onClick={handleSetPassword}
                 loading={settingPassword}
                 disabled={settingPassword || password.length < 6 || password !== confirmPassword}
               >
-                Set password & open wallet
+                Set password & open
               </Button>
             </div>
           ) : !unlocked ? (
-            /* ─── Unlock screen ─── */
-            <div className="max-w-sm mx-auto py-10 px-6">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                <Unlock className="w-7 h-7 text-emerald-400" />
+            /* ─── Unlock ─── */
+            <div className="px-5 py-8">
+              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
+                <Unlock className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-lg font-semibold text-white text-center mb-1">Unlock Carbon Wallet</h3>
-              <p className="text-dark-400 text-sm text-center mb-6">Enter your password to continue.</p>
+              <h3 className="text-sm font-semibold text-white text-center mb-1">Unlock Wallet</h3>
+              <p className="text-dark-400 text-xs text-center mb-5">Enter your password to continue.</p>
               <Input
                 label="Password"
                 type="password"
@@ -387,402 +419,352 @@ export function CarbonWalletModal({ isOpen, onClose }: CarbonWalletModalProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
               />
-              <Button className="w-full mt-5" onClick={handleUnlock} loading={verifying} disabled={verifying || !password}>
+              <Button className="w-full mt-4" onClick={handleUnlock} loading={verifying} disabled={verifying || !password}>
                 Unlock
               </Button>
             </div>
-          ) : (
-            /* ═══════════════════════════════════════════════
-               UNLOCKED WALLET — MAIN CONTENT
-               ═══════════════════════════════════════════════ */
-            <div className="p-6 space-y-6">
+          ) : view === 'home' ? (
+            /* ═══════════════════════════════════════
+               HOME VIEW — compact overview
+               ═══════════════════════════════════════ */
+            <div className="p-4 space-y-3">
 
-              {/* ─── Account card + Balances row ─── */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {/* Account info */}
-                <div className="lg:col-span-1 bg-gradient-to-br from-emerald-600/20 via-dark-800 to-dark-800 border border-emerald-500/20 rounded-xl p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Award className="w-5 h-5 text-emerald-400" />
-                    <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Carbon Account</span>
-                  </div>
-                  <p className="font-mono text-emerald-300 font-bold text-lg mb-2">{accountNumber}</p>
-                  <div className="flex items-center gap-2">
-                    <p className="font-mono text-sm text-dark-300 truncate">{address ? formatAddress(address, 6) : ''}</p>
-                    <button onClick={copyAddress} className="text-dark-400 hover:text-white transition-colors" title="Copy address">
-                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-dark-500">
-                    <Shield className="w-3.5 h-3.5" />
-                    <span>Government-authorized depository</span>
-                  </div>
+              {/* Account card */}
+              <div className="bg-gradient-to-br from-emerald-600/15 via-dark-800 to-dark-800 border border-emerald-500/15 rounded-xl p-3.5">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Award className="w-4 h-4 text-emerald-400" />
+                  <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Carbon Account</span>
                 </div>
-
-                {/* Balance cards */}
-                <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {/* USDC */}
-                  <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 flex flex-col justify-between">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                        <DollarSign className="w-4 h-4 text-blue-400" />
-                      </div>
-                      <span className="text-xs text-dark-400 font-medium">USDC</span>
-                    </div>
-                    <p className="text-2xl font-bold text-white">
-                      {loading ? '...' : usdcBalance !== null ? formatCurrency(usdcBalance) : '$0.00'}
-                    </p>
-                    <p className="text-xs text-dark-500 mt-1">Payment token</p>
-                  </div>
-                  {/* CCT */}
-                  <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 flex flex-col justify-between">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                        <Zap className="w-4 h-4 text-emerald-400" />
-                      </div>
-                      <span className="text-xs text-dark-400 font-medium">CCT</span>
-                    </div>
-                    <p className="text-2xl font-bold text-white">
-                      {loading ? '...' : cctBalance !== null ? formatCarbonTonnes(cctBalance) : '0'}
-                    </p>
-                    <p className="text-xs text-dark-500 mt-1">Wrapped carbon tokens</p>
-                  </div>
-                  {/* NFTs */}
-                  <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 flex flex-col justify-between col-span-2 sm:col-span-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
-                        <Leaf className="w-4 h-4 text-purple-400" />
-                      </div>
-                      <span className="text-xs text-dark-400 font-medium">NFT Credits</span>
-                    </div>
-                    <p className="text-2xl font-bold text-white">
-                      {loading ? '...' : nftCredits.length}
-                    </p>
-                    <p className="text-xs text-dark-500 mt-1">{formatCarbonTonnes(nftActiveTonnes)} active</p>
-                  </div>
+                <p className="font-mono text-emerald-300 font-bold text-sm">{accountNumber}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="font-mono text-xs text-dark-400 truncate">{address ? formatAddress(address, 6) : ''}</p>
+                  <button onClick={copyAddress} className="text-dark-500 hover:text-white transition-colors shrink-0" title="Copy">
+                    {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  </button>
+                </div>
+                <div className="flex items-center gap-1 text-[10px] text-dark-500 mt-1.5">
+                  <Shield className="w-3 h-3" />
+                  <span>Government-authorized depository</span>
                 </div>
               </div>
 
-              {/* ─── Quick stats row ─── */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-4 py-3 text-center">
-                  <p className="text-dark-400 text-xs mb-1">Active Orders</p>
-                  <p className="text-lg font-bold text-white">{loading ? '...' : myOrders.length}</p>
+              {/* Balances — 3 inline cards */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-dark-800 border border-dark-700 rounded-lg p-2.5 text-center">
+                  <div className="w-6 h-6 rounded-md bg-blue-500/15 flex items-center justify-center mx-auto mb-1">
+                    <DollarSign className="w-3 h-3 text-blue-400" />
+                  </div>
+                  <p className="text-xs font-bold text-white truncate">
+                    {loading ? '...' : usdcBalance !== null ? formatCurrency(usdcBalance) : '$0'}
+                  </p>
+                  <p className="text-[10px] text-dark-500">USDC</p>
                 </div>
-                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-4 py-3 text-center">
-                  <p className="text-dark-400 text-xs mb-1">Buy Orders</p>
-                  <p className="text-lg font-bold text-emerald-400">{loading ? '...' : myBuyOrders.length}</p>
+                <div className="bg-dark-800 border border-dark-700 rounded-lg p-2.5 text-center">
+                  <div className="w-6 h-6 rounded-md bg-emerald-500/15 flex items-center justify-center mx-auto mb-1">
+                    <Zap className="w-3 h-3 text-emerald-400" />
+                  </div>
+                  <p className="text-xs font-bold text-white truncate">
+                    {loading ? '...' : cctBalance !== null ? formatCarbonTonnes(cctBalance) : '0'}
+                  </p>
+                  <p className="text-[10px] text-dark-500">CCT</p>
                 </div>
-                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-4 py-3 text-center">
-                  <p className="text-dark-400 text-xs mb-1">Sell Orders</p>
-                  <p className="text-lg font-bold text-orange-400">{loading ? '...' : mySellOrders.length}</p>
-                </div>
-                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-4 py-3 text-center">
-                  <p className="text-dark-400 text-xs mb-1">Depository</p>
-                  <p className="text-lg font-bold text-blue-400">{loading ? '...' : `${activeDepCredits.length} active`}</p>
+                <div className="bg-dark-800 border border-dark-700 rounded-lg p-2.5 text-center">
+                  <div className="w-6 h-6 rounded-md bg-purple-500/15 flex items-center justify-center mx-auto mb-1">
+                    <Leaf className="w-3 h-3 text-purple-400" />
+                  </div>
+                  <p className="text-xs font-bold text-white">
+                    {loading ? '...' : nftCredits.length}
+                  </p>
+                  <p className="text-[10px] text-dark-500">NFTs</p>
                 </div>
               </div>
 
-              {/* ─── Refresh ─── */}
-              <div className="flex justify-end">
+              {/* Quick stats — 2x2 */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-3 py-2 flex items-center justify-between">
+                  <span className="text-dark-400 text-[11px]">Buy Orders</span>
+                  <span className="text-xs font-bold text-emerald-400">{loading ? '...' : myBuyOrders.length}</span>
+                </div>
+                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-3 py-2 flex items-center justify-between">
+                  <span className="text-dark-400 text-[11px]">Sell Orders</span>
+                  <span className="text-xs font-bold text-orange-400">{loading ? '...' : mySellOrders.length}</span>
+                </div>
+                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-3 py-2 flex items-center justify-between">
+                  <span className="text-dark-400 text-[11px]">Dep. Active</span>
+                  <span className="text-xs font-bold text-blue-400">{loading ? '...' : activeDepCredits.length}</span>
+                </div>
+                <div className="bg-dark-800/60 border border-dark-700/50 rounded-lg px-3 py-2 flex items-center justify-between">
+                  <span className="text-dark-400 text-[11px]">Retired</span>
+                  <span className="text-xs font-bold text-dark-400">{loading ? '...' : retiredDepCredits.length}</span>
+                </div>
+              </div>
+
+              {/* Holdings breakdown */}
+              <div className="bg-dark-800 border border-dark-700 rounded-xl p-3.5 space-y-2">
+                <h4 className="text-xs font-medium text-dark-300 mb-2">Holdings Summary</h4>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-dark-400">USDC Balance</span>
+                  <span className="text-white font-medium">{usdcBalance !== null ? formatCurrency(usdcBalance) : '—'}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-dark-400">CCT (wrapped)</span>
+                  <span className="text-white font-medium">{cctBalance !== null ? formatCarbonTonnes(cctBalance) : '—'}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-dark-400">NFT Active</span>
+                  <span className="text-white font-medium">{nftCredits.filter(c => !c.isRetired).length} ({formatCarbonTonnes(nftActiveTonnes)})</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-dark-400">Depository Active</span>
+                  <span className="text-white font-medium">{activeDepCredits.length} ({formatCarbonTonnes(totalDepActive)})</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-dark-400">Total Retired</span>
+                  <span className="text-dark-500 font-medium">{retiredDepCredits.length} ({formatCarbonTonnes(totalDepRetired)})</span>
+                </div>
+              </div>
+
+              {/* Navigation items to detail views */}
+              <div className="space-y-1 pt-1">
                 <button
-                  onClick={() => fetchAll()}
-                  disabled={loading || balanceRefreshing}
-                  className="flex items-center gap-1.5 text-xs text-dark-400 hover:text-white transition-colors disabled:opacity-50"
+                  onClick={() => setView('nfts')}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-dark-800/50 hover:bg-dark-800 border border-dark-700/50 hover:border-dark-600 transition-colors group"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${(loading || balanceRefreshing) ? 'animate-spin' : ''}`} />
-                  Refresh all
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-md bg-purple-500/10 flex items-center justify-center">
+                      <Leaf className="w-3.5 h-3.5 text-purple-400" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-medium text-dark-200">NFT Credits</p>
+                      <p className="text-[10px] text-dark-500">{nftCredits.length} credits • {formatCarbonTonnes(nftActiveTonnes)} active</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-dark-500 group-hover:text-dark-300 transition-colors" />
+                </button>
+                <button
+                  onClick={() => setView('orders')}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-dark-800/50 hover:bg-dark-800 border border-dark-700/50 hover:border-dark-600 transition-colors group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-md bg-emerald-500/10 flex items-center justify-center">
+                      <ShoppingCart className="w-3.5 h-3.5 text-emerald-400" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-medium text-dark-200">My Orders</p>
+                      <p className="text-[10px] text-dark-500">{myOrders.length} active orders</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-dark-500 group-hover:text-dark-300 transition-colors" />
+                </button>
+                <button
+                  onClick={() => setView('depository')}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-dark-800/50 hover:bg-dark-800 border border-dark-700/50 hover:border-dark-600 transition-colors group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-md bg-blue-500/10 flex items-center justify-center">
+                      <Wallet className="w-3.5 h-3.5 text-blue-400" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-medium text-dark-200">Depository</p>
+                      <p className="text-[10px] text-dark-500">{depCredits.length} credits • {activeDepCredits.length} active</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-dark-500 group-hover:text-dark-300 transition-colors" />
                 </button>
               </div>
 
-              {/* ─── Tabs ─── */}
-              <div className="flex gap-1 border-b border-dark-700 -mx-6 px-6">
-                {tabs.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setActiveTab(t.id)}
-                    className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${
-                      activeTab === t.id
-                        ? 'text-emerald-400'
-                        : 'text-dark-400 hover:text-dark-200'
-                    }`}
-                  >
-                    {t.label}
-                    {t.count !== undefined && t.count > 0 && (
-                      <span className="ml-1.5 text-[10px] bg-dark-700 text-dark-300 rounded-full px-1.5 py-0.5">{t.count}</span>
-                    )}
-                    {activeTab === t.id && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-t" />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {/* ═══ Tab content ═══ */}
-
-              {/* ─── Overview Tab ─── */}
-              {activeTab === 'overview' && (
-                <div className="space-y-4">
-                  {/* Portfolio summary cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="p-5 bg-gradient-to-br from-blue-500/5 to-dark-800 border-blue-500/10">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-medium text-dark-300">Token Holdings</h4>
-                        <DollarSign className="w-4 h-4 text-blue-400" />
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center">
-                              <span className="text-[10px] font-bold text-blue-400">$</span>
-                            </div>
-                            <span className="text-dark-200 text-sm">USDC</span>
-                          </div>
-                          <span className="font-semibold text-white">{usdcBalance !== null ? formatCurrency(usdcBalance) : '—'}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
-                              <Zap className="w-3 h-3 text-emerald-400" />
-                            </div>
-                            <span className="text-dark-200 text-sm">CCT (wrapped)</span>
-                          </div>
-                          <span className="font-semibold text-white">{cctBalance !== null ? formatCarbonTonnes(cctBalance) : '—'}</span>
-                        </div>
-                      </div>
-                    </Card>
-
-                    <Card className="p-5 bg-gradient-to-br from-emerald-500/5 to-dark-800 border-emerald-500/10">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-medium text-dark-300">Carbon Credits</h4>
-                        <Leaf className="w-4 h-4 text-emerald-400" />
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-dark-200 text-sm">NFT Credits (on-chain)</span>
-                          <span className="font-semibold text-white">{nftCredits.length} ({formatCarbonTonnes(nftActiveTonnes)})</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-dark-200 text-sm">Depository (active)</span>
-                          <span className="font-semibold text-white">{activeDepCredits.length} ({formatCarbonTonnes(totalDepActive)})</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-dark-200 text-sm">Retired</span>
-                          <span className="font-semibold text-dark-400">{retiredDepCredits.length} ({formatCarbonTonnes(totalDepRetired)})</span>
-                        </div>
-                      </div>
-                    </Card>
+              {/* Recent orders preview */}
+              {myOrders.length > 0 && (
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-medium text-dark-300">Recent Orders</h4>
+                    <button onClick={() => setView('orders')} className="text-[10px] text-emerald-400 hover:underline">View all →</button>
                   </div>
-
-                  {/* Active orders summary */}
-                  {myOrders.length > 0 && (
-                    <Card className="p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-medium text-dark-300">Active Orders</h4>
-                        <button onClick={() => setActiveTab('orders')} className="text-xs text-emerald-400 hover:underline">View all →</button>
-                      </div>
-                      <div className="space-y-2">
-                        {myOrders.slice(0, 3).map((o) => (
-                          <div key={o.orderId} className="flex items-center justify-between text-sm py-2 border-b border-dark-700/50 last:border-0">
-                            <div className="flex items-center gap-2">
-                              {o.isBuyOrder ? (
-                                <ArrowDownRight className="w-4 h-4 text-emerald-400" />
-                              ) : (
-                                <ArrowUpRight className="w-4 h-4 text-orange-400" />
-                              )}
-                              <span className="text-dark-200">{o.isBuyOrder ? 'Buy' : 'Sell'} #{o.orderId}</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-white font-medium">{formatCarbonTonnes(o.amount - o.filled)}</span>
-                              <span className="text-dark-500 ml-2">@ {formatCurrency(o.pricePerTonne)}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                  )}
-                </div>
-              )}
-
-              {/* ─── NFT Credits Tab ─── */}
-              {activeTab === 'nfts' && (
-                <div>
-                  {nftCredits.length === 0 ? (
-                    <EmptyState
-                      title="No NFT credits"
-                      description="Carbon credit NFTs you own will appear here. Register as a company and get credits minted."
-                      icon={<Leaf className="w-10 h-10 text-dark-500" />}
-                    />
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {nftCredits.map((c) => (
-                        <div key={c.id} className="bg-dark-800 border border-dark-700 rounded-xl p-4 space-y-2">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="font-semibold text-white text-sm">{c.projectName}</p>
-                              <p className="text-xs text-dark-400 font-mono">Token #{c.tokenId}</p>
-                            </div>
-                            <Badge variant={c.isRetired ? 'default' : 'success'} size="sm">
-                              {c.isRetired ? 'Retired' : 'Active'}
-                            </Badge>
-                          </div>
-                          <div className="grid grid-cols-3 gap-2 text-xs">
-                            <div>
-                              <p className="text-dark-500">Tonnes</p>
-                              <p className="text-white font-medium">{formatCarbonTonnes(c.co2Tonnes)}</p>
-                            </div>
-                            <div>
-                              <p className="text-dark-500">Vintage</p>
-                              <p className="text-white font-medium">{c.vintageYear}</p>
-                            </div>
-                            <div>
-                              <p className="text-dark-500">Methodology</p>
-                              <p className="text-white font-medium text-[10px]">{c.methodology}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ─── My Orders Tab ─── */}
-              {activeTab === 'orders' && (
-                <div>
-                  {myOrders.length === 0 ? (
-                    <EmptyState
-                      title="No active orders"
-                      description="Your marketplace buy and sell orders will appear here."
-                      icon={<ShoppingCart className="w-10 h-10 text-dark-500" />}
-                    />
-                  ) : (
-                    <div className="space-y-3">
-                      {myOrders.map((o) => (
-                        <div key={o.orderId} className="bg-dark-800 border border-dark-700 rounded-xl p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              {o.isBuyOrder ? (
-                                <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                                  <ArrowDownRight className="w-4 h-4 text-emerald-400" />
-                                </div>
-                              ) : (
-                                <div className="w-8 h-8 rounded-lg bg-orange-500/15 flex items-center justify-center">
-                                  <ArrowUpRight className="w-4 h-4 text-orange-400" />
-                                </div>
-                              )}
-                              <div>
-                                <p className="text-white font-medium text-sm">{o.isBuyOrder ? 'Buy' : 'Sell'} Order #{o.orderId}</p>
-                                <p className="text-dark-400 text-xs">{formatCurrency(o.pricePerTonne)} per tonne</p>
-                              </div>
-                            </div>
-                            <Badge variant={o.isActive ? 'success' : 'default'} size="sm">
-                              {o.isActive ? 'Active' : 'Closed'}
-                            </Badge>
-                          </div>
-                          <div className="grid grid-cols-3 gap-3 text-xs mt-3">
-                            <div>
-                              <p className="text-dark-500">Total</p>
-                              <p className="text-white font-medium">{formatCarbonTonnes(o.amount)}</p>
-                            </div>
-                            <div>
-                              <p className="text-dark-500">Filled</p>
-                              <p className="text-emerald-400 font-medium">{formatCarbonTonnes(o.filled)}</p>
-                            </div>
-                            <div>
-                              <p className="text-dark-500">Remaining</p>
-                              <p className="text-orange-400 font-medium">{formatCarbonTonnes(o.amount - o.filled)}</p>
-                            </div>
-                          </div>
-                          {o.filled > 0 && (
-                            <div className="mt-2">
-                              <div className="w-full bg-dark-700 rounded-full h-1.5">
-                                <div
-                                  className="bg-emerald-500 h-1.5 rounded-full transition-all"
-                                  style={{ width: `${(o.filled / o.amount) * 100}%` }}
-                                />
-                              </div>
-                            </div>
+                  <div className="space-y-1">
+                    {myOrders.slice(0, 3).map((o) => (
+                      <div key={o.orderId} className="flex items-center justify-between text-xs py-1.5 px-2 rounded bg-dark-800/40">
+                        <div className="flex items-center gap-1.5">
+                          {o.isBuyOrder ? (
+                            <ArrowDownRight className="w-3 h-3 text-emerald-400" />
+                          ) : (
+                            <ArrowUpRight className="w-3 h-3 text-orange-400" />
                           )}
+                          <span className="text-dark-300">{o.isBuyOrder ? 'Buy' : 'Sell'} #{o.orderId}</span>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ─── Depository Tab ─── */}
-              {activeTab === 'depository' && (
-                <div>
-                  {depCredits.length === 0 ? (
-                    <EmptyState
-                      title="No depository credits"
-                      description="Credits held in the ATMOS Depository will appear here."
-                      icon={<Wallet className="w-10 h-10 text-dark-500" />}
-                    />
-                  ) : (
-                    <div className="overflow-x-auto -mx-2">
-                      <table className="w-full text-left text-sm">
-                        <thead>
-                          <tr className="border-b border-dark-700 text-dark-400 text-xs">
-                            <th className="pb-2 pr-2">Credit ID</th>
-                            <th className="pb-2 pr-2">Project</th>
-                            <th className="pb-2 pr-2">Tonnes</th>
-                            <th className="pb-2 pr-2">Status</th>
-                            <th className="pb-2">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {depCredits.map((c) => (
-                            <React.Fragment key={c.creditId}>
-                              <tr className="border-b border-dark-700/70">
-                                <td className="py-2 pr-2 font-mono text-dark-200 text-xs">{c.creditId}</td>
-                                <td className="py-2 pr-2 text-dark-200 text-xs">{c.projectId}</td>
-                                <td className="py-2 pr-2 font-medium text-dark-100">{formatCarbonTonnes(c.co2Amount)}</td>
-                                <td className="py-2 pr-2">
-                                  <Badge variant={c.status === 'Active' ? 'success' : 'default'} size="sm">{c.status}</Badge>
-                                </td>
-                                <td className="py-2">
-                                  {c.status === 'Active' && (
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => setRetireCreditId(retireCreditId === c.creditId ? null : c.creditId)}
-                                    >
-                                      Retire
-                                    </Button>
-                                  )}
-                                </td>
-                              </tr>
-                              {retireCreditId === c.creditId && c.status === 'Active' && (
-                                <tr className="bg-dark-800/50">
-                                  <td colSpan={5} className="py-3 px-2">
-                                    <Input
-                                      placeholder="Reason (optional)"
-                                      value={retireReason}
-                                      onChange={(e) => setRetireReason(e.target.value)}
-                                      className="mb-2"
-                                    />
-                                    <div className="flex gap-2">
-                                      <Button size="sm" onClick={handleRetire} loading={retiring} disabled={retiring}>
-                                        Confirm retire
-                                      </Button>
-                                      <Button size="sm" variant="ghost" onClick={() => { setRetireCreditId(null); setRetireReason(''); }} disabled={retiring}>
-                                        Cancel
-                                      </Button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                        <span className="text-dark-400">{formatCarbonTonnes(o.amount - o.filled)} @ {formatCurrency(o.pricePerTonne)}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
-          )}
+          ) : view === 'nfts' ? (
+            /* ═══════════════════════════════════════
+               NFT CREDITS VIEW
+               ═══════════════════════════════════════ */
+            <div className="p-4">
+              {nftCredits.length === 0 ? (
+                <EmptyState
+                  title="No NFT credits"
+                  description="Carbon credit NFTs you own will appear here."
+                  icon={<Leaf className="w-8 h-8 text-dark-500" />}
+                />
+              ) : (
+                <div className="space-y-2">
+                  {nftCredits.map((c) => (
+                    <div key={c.id} className="bg-dark-800 border border-dark-700 rounded-lg p-3 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-white text-xs truncate">{c.projectName}</p>
+                          <p className="text-[10px] text-dark-400 font-mono">Token #{c.tokenId}</p>
+                        </div>
+                        <Badge variant={c.isRetired ? 'default' : 'success'} size="sm">
+                          {c.isRetired ? 'Retired' : 'Active'}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-[11px]">
+                        <div>
+                          <p className="text-dark-500">Tonnes</p>
+                          <p className="text-white font-medium">{formatCarbonTonnes(c.co2Tonnes)}</p>
+                        </div>
+                        <div>
+                          <p className="text-dark-500">Vintage</p>
+                          <p className="text-white font-medium">{c.vintageYear}</p>
+                        </div>
+                        <div>
+                          <p className="text-dark-500">Method</p>
+                          <p className="text-white font-medium truncate">{c.methodology}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : view === 'orders' ? (
+            /* ═══════════════════════════════════════
+               MY ORDERS VIEW
+               ═══════════════════════════════════════ */
+            <div className="p-4">
+              {myOrders.length === 0 ? (
+                <EmptyState
+                  title="No active orders"
+                  description="Your marketplace orders will appear here."
+                  icon={<ShoppingCart className="w-8 h-8 text-dark-500" />}
+                />
+              ) : (
+                <div className="space-y-2">
+                  {myOrders.map((o) => (
+                    <div key={o.orderId} className="bg-dark-800 border border-dark-700 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          {o.isBuyOrder ? (
+                            <div className="w-6 h-6 rounded bg-emerald-500/15 flex items-center justify-center">
+                              <ArrowDownRight className="w-3 h-3 text-emerald-400" />
+                            </div>
+                          ) : (
+                            <div className="w-6 h-6 rounded bg-orange-500/15 flex items-center justify-center">
+                              <ArrowUpRight className="w-3 h-3 text-orange-400" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-white font-medium text-xs">{o.isBuyOrder ? 'Buy' : 'Sell'} #{o.orderId}</p>
+                            <p className="text-dark-400 text-[10px]">{formatCurrency(o.pricePerTonne)}/t</p>
+                          </div>
+                        </div>
+                        <Badge variant={o.isActive ? 'success' : 'default'} size="sm">
+                          {o.isActive ? 'Active' : 'Closed'}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-[11px]">
+                        <div>
+                          <p className="text-dark-500">Total</p>
+                          <p className="text-white font-medium">{formatCarbonTonnes(o.amount)}</p>
+                        </div>
+                        <div>
+                          <p className="text-dark-500">Filled</p>
+                          <p className="text-emerald-400 font-medium">{formatCarbonTonnes(o.filled)}</p>
+                        </div>
+                        <div>
+                          <p className="text-dark-500">Left</p>
+                          <p className="text-orange-400 font-medium">{formatCarbonTonnes(o.amount - o.filled)}</p>
+                        </div>
+                      </div>
+                      {o.filled > 0 && (
+                        <div className="mt-2">
+                          <div className="w-full bg-dark-700 rounded-full h-1">
+                            <div
+                              className="bg-emerald-500 h-1 rounded-full transition-all"
+                              style={{ width: `${(o.filled / o.amount) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : view === 'depository' ? (
+            /* ═══════════════════════════════════════
+               DEPOSITORY VIEW
+               ═══════════════════════════════════════ */
+            <div className="p-4">
+              {depCredits.length === 0 ? (
+                <EmptyState
+                  title="No depository credits"
+                  description="Credits held in the ATMOS Depository will appear here."
+                  icon={<Wallet className="w-8 h-8 text-dark-500" />}
+                />
+              ) : (
+                <div className="space-y-2">
+                  {depCredits.map((c) => (
+                    <div key={c.creditId} className="bg-dark-800 border border-dark-700 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-mono text-dark-200 truncate">{c.creditId}</p>
+                          <p className="text-[10px] text-dark-500">{c.projectId}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          <Badge variant={c.status === 'Active' ? 'success' : 'default'} size="sm">{c.status}</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-white">{formatCarbonTonnes(c.co2Amount)}</span>
+                        {c.status === 'Active' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setRetireCreditId(retireCreditId === c.creditId ? null : c.creditId)}
+                          >
+                            Retire
+                          </Button>
+                        )}
+                      </div>
+                      {retireCreditId === c.creditId && c.status === 'Active' && (
+                        <div className="mt-2 pt-2 border-t border-dark-700/50">
+                          <Input
+                            placeholder="Reason (optional)"
+                            value={retireReason}
+                            onChange={(e) => setRetireReason(e.target.value)}
+                            className="mb-2"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" onClick={handleRetire} loading={retiring} disabled={retiring}>
+                              Confirm
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => { setRetireCreditId(null); setRetireReason(''); }} disabled={retiring}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
